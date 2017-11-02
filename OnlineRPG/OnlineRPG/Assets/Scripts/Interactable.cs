@@ -1,57 +1,46 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public abstract class Interactable : MonoBehaviour
 {
+    #region Delegates
+    public delegate void OnInteractableReachedDelegate();
+    #endregion
+
     [Header("Base Class Variables")]
     public Transform interactionTransform;
     public float radius = 3f;
 
     [Space]
 
+    [Header("Cursor")]
     public Texture2D defaultCursor;
     public Texture2D hoverCursor;
 
     [Space]
 
-    [Header("Skills")]
-    public string skillName;
-    public float xpGain;
-
-    [Space]
-
-    [Header("Items")]
-    public Inventory inventory;
-    public string itemToAddSlug;
-
-    [Space]
-
     [Tooltip("The name of the interactable.")] public string interactableName;
 
-    bool isFocused;
+    bool isFocused = false;
     bool hasArrived = false;
-    [HideInInspector] public Transform player;
-    private Action callbackMethod;
+    OnInteractableReachedDelegate onInteractableReached;
+
+    [HideInInspector] public Player player;
 
     void Update()
     {
         if (isFocused && !hasArrived)
         {
-            float distance = Vector3.Distance(player.position, transform.position);
+            float distance = Vector3.Distance(player.transform.position, transform.position);
             if (distance <= radius)
             {
-                Interact();
+                if (onInteractableReached != null)
+                {
+                    onInteractableReached.Invoke();
+                }
+
                 hasArrived = true;
             }
-        }
-    }
-
-    public virtual void Interact()
-    {
-        if (callbackMethod != null)
-        {
-            callbackMethod.Invoke();
         }
     }
 
@@ -60,7 +49,7 @@ public abstract class Interactable : MonoBehaviour
         InteractionManager.instance.Show();
     }
 
-    public void OnFocus(Transform player)
+    public void OnFocus(Player player)
     {
         isFocused = true;
         this.player = player;
@@ -72,16 +61,18 @@ public abstract class Interactable : MonoBehaviour
         this.player = null;
     }
 
-    public void MoveToInteractable(Action callbackMethod)
+    public void MoveToInteractable(OnInteractableReachedDelegate onInteractableReached)
     {
-        this.callbackMethod = callbackMethod;
+        this.onInteractableReached = onInteractableReached;
         hasArrived = false;
+
         if (player != null)
         {
             player.GetComponent<Player>().FollowTarget(this);
         }
     }
 
+    #region Gizmos
     void OnDrawGizmosSelected()
     {
         if (interactionTransform == null)
@@ -92,12 +83,17 @@ public abstract class Interactable : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(interactionTransform.position, radius);
     }
+    #endregion
 
+    #region Cursor
     private void OnMouseOver()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             Cursor.SetCursor(hoverCursor, Vector2.zero, CursorMode.ForceSoftware);
+        } else
+        {
+            Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.ForceSoftware);
         }
     }
 
@@ -105,4 +101,5 @@ public abstract class Interactable : MonoBehaviour
     {
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.ForceSoftware);
     }
+    #endregion
 }

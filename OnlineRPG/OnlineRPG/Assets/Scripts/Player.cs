@@ -4,6 +4,8 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Player : MonoBehaviour
 {
+    public CharacterStats stats;
+
     [SerializeField] private float rotationSpeed = 5f;
 
     NavMeshAgent agent;
@@ -12,10 +14,12 @@ public class Player : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        stats = GetComponent<CharacterStats>();
     }
 
     public void MoveToPoint(Vector3 point)
     {
+        InteractionManager.instance.Hide();
         agent.SetDestination(point);
     }
 
@@ -30,6 +34,7 @@ public class Player : MonoBehaviour
 
     public void FollowTarget(Interactable newTarget)
     {
+        InteractionManager.instance.Hide();
         agent.stoppingDistance = newTarget.radius * 0.8f;
         agent.updateRotation = false;
         target = newTarget.interactionTransform;

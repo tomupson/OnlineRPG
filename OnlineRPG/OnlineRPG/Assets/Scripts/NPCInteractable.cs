@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections.Generic;
 
 public class NPCInteractable : Interactable
 {
-    [SerializeField] private List<Option> interactOptions;
+    public List<Option> interactOptions;
 
     public override void OpenContextMenu()
     {
@@ -14,19 +13,18 @@ public class NPCInteractable : Interactable
         });
 
         InteractionManager.instance.SetOptions(interactOptions);
+
         base.OpenContextMenu();
     }
 
-    public void MoveToNPC()
+    public void MoveToInteractable()
     {
-        MoveToInteractable(TalkToNPC);
+        base.MoveToInteractable(TalkToNPC);
     }
 
     void TalkToNPC()
     {
         Debug.Log("Started Dialogue with NPC");
-        BaseSkill skill = player.GetComponent<CharacterStats>().skills.Where(x => x.Name == skillName).FirstOrDefault();
-        SkillManager.instance.GrantXPToSkill(skill, xpGain);
-        inventory.AddItem(itemToAddSlug);
+        // TO DO: DIALOGUE
     }
 }

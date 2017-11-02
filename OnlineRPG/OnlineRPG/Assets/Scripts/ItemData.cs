@@ -1,18 +1,38 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
 {
     [HideInInspector] public Item item;
-    [HideInInspector] public int amount;
+    private int amount;
+    public int Amount
+    {
+        get
+        {
+            return amount;
+        } set
+        {
+            amount = value;
+            TextMeshProUGUI txt = GetComponentInChildren<TextMeshProUGUI>();
+            if (value <= 1)
+            {
+                txt.text = "";
+            } else
+            {
+                txt.text = value.ToString();
+            }
+        }
+    }
+
     [HideInInspector] public int slot;
 
-    private Inventory inventory;
-    private Transform content;
-    private Tooltip tooltip;
+    Inventory inventory;
+    Transform content;
+    Tooltip tooltip;
 
-    private Vector2 offset;
-    private CanvasGroup canvasGroup;
+    Vector2 offset;
+    CanvasGroup canvasGroup;
 
     void Start()
     {
@@ -51,11 +71,20 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
     {
-        tooltip.Activate(item);
+        //tooltip.Activate(item);
     }
 
     void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
     {
-        tooltip.Deactivate();
+        //tooltip.Deactivate();
+    }
+
+    void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            inventory.SetInfo(item);
+            inventory.ShowInfo();
+        }
     }
 }

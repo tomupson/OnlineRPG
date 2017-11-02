@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public interface IEnemy
+﻿public interface IEnemy
 {
     int Id { get; set; }
     int Experience { get; set; }

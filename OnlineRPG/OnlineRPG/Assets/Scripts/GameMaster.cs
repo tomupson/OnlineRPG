@@ -8,4 +8,22 @@ public class GameMaster : MonoBehaviour
 	{
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.ForceSoftware);
 	}
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Inventory.instance.CloseInventory();
+        }
+
+        if (Input.GetKeyDown(Controls.OPEN_INVENTORY))
+        {
+            Inventory.instance.ToggleInventory();
+        }
+
+        if (Input.GetKeyDown(Controls.OPEN_SKILLS))
+        {
+            SkillManager.instance.ToggleSkillMenu();
+        }
+    }
 }

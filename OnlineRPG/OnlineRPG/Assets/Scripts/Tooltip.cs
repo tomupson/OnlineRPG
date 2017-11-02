@@ -1,13 +1,13 @@
-﻿using UnityEngine;
-using TMPro;
+﻿using TMPro;
+using UnityEngine;
 
 public class Tooltip : MonoBehaviour
 {
     [SerializeField] private GameObject tooltip;
 
-    private Item item;
-    private string data;
-    private TextMeshProUGUI tooltipText;
+    Item item;
+    string data;
+    TextMeshProUGUI tooltipText;
 
     void Start()
     {
@@ -36,9 +36,7 @@ public class Tooltip : MonoBehaviour
 
     public void ConstructDataString()
     {
-        data = string.Format("<color=#D3D3D3FF><size=15>{0}</size></color>\n" +
-            "<color=#D3D3D3FF><size=12>{1}</size></color>\n" +
-            "<color=#D3D3D3FF><size=12>{2}</size></color>", item.Name, item.Description, string.Join(", ", item.Uses));
+        data = string.Format("<color=#D3D3D3FF><size=15>{0}</size>\n<size=12>Right click for more information.</size></color>", item.Name);
         tooltipText.text = data;
     }
 }

@@ -11,6 +11,18 @@ public class TreeInteractable : Interactable
     [SerializeField] private GameObject treeGfx;
     [SerializeField] private GameObject stumpGfx;
 
+    Inventory inventory;
+
+    [Header("On Chop")]
+    public float chopXpGain;
+    public string chopItemSlug;
+    public int chopItemAmount;
+
+    void Start()
+    {
+        inventory = FindObjectOfType<Inventory>();
+    }
+
     public override void OpenContextMenu()
     {
         interactOptions.ForEach((i) =>
@@ -22,25 +34,20 @@ public class TreeInteractable : Interactable
         base.OpenContextMenu();
     }
 
-    public void MoveToTree()
+    public void MoveToInteractable()
     {
-        MoveToInteractable(ChopTree);
+        base.MoveToInteractable(ChopTree);
     }
 
     void ChopTree()
     {
-        Debug.Log("Chopping Tree");
         StartCoroutine(GrowTree());
         //treeGfx.SetActive(false);
-
-        if (!string.IsNullOrEmpty(skillName))
-        {
-            BaseSkill skill = player.GetComponent<CharacterStats>().skills.Where(x => x.Name == skillName).FirstOrDefault();
-            SkillManager.instance.GrantXPToSkill(skill, xpGain);
-        }
+        BaseSkill skill = player.stats.skills.Where(x => x.Name == "Woodcutting").FirstOrDefault();
+        SkillManager.instance.GrantXPToSkill(skill, chopXpGain);
 
         //stumpGfx.SetActive(true);
-        inventory.AddItem(itemToAddSlug);
+        inventory.AddItem(chopItemSlug, chopItemAmount);
     }
 
     IEnumerator GrowTree()

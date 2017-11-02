@@ -1,16 +1,36 @@
-﻿using System.Collections;
-using System.Linq;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class SkillManager : MonoBehaviour
 {
+    #region Singleton
     public static SkillManager instance;
+    #endregion
 
+    CharacterStats stats;
+
+    [SerializeField] private GameObject skillMenu;
     [SerializeField] private GameObject skillPrefab;
+    [SerializeField] private GameObject rightMenu;
     [SerializeField] private Transform contentTransform;
     [SerializeField] private GameObject skillXpGained;
+
+    [Space]
+
+    [Header("Info")]
+    [SerializeField] private Image skillImage;
+    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TextMeshProUGUI currentXpText;
+    [SerializeField] private TextMeshProUGUI requiredXpText;
+    [SerializeField] private Image xpBar;
+
+    BaseSkill focusedSkill;
+
+    bool infoSet;
+    public bool open = false;
 
     void Awake()
     {
@@ -25,7 +45,26 @@ public class SkillManager : MonoBehaviour
 
     void Start()
     {
+        stats = FindObjectOfType<Player>().GetComponent<CharacterStats>();
         skillXpGained.SetActive(false);
+
+        CloseSkillMenu();
+        infoSet = false;
+    }
+
+    public void ManageEvents()
+    {
+        if (focusedSkill == null) return;
+
+        focusedSkill.OnExperienceChanged += RefreshInfo;
+
+        foreach (BaseSkill skill in stats.skills)
+        {
+            if (skill != focusedSkill)
+            {
+                skill.OnExperienceChanged -= RefreshInfo;
+            }
+        }
     }
 
     public void CreateSkillFor(BaseSkill skill)
@@ -57,5 +96,62 @@ public class SkillManager : MonoBehaviour
         animator.SetBool("IsShowing", false);
 
         yield return null;
+    }
+
+    public void ShowInfo()
+    {
+        if (!infoSet)
+        {
+            Debug.LogError("You must set the Item information before showing it!");
+            return;
+        }
+
+        rightMenu.SetActive(true);
+        ManageEvents();
+    }
+
+    public void HideInfo()
+    {
+        infoSet = false;
+        rightMenu.SetActive(false);
+        focusedSkill = null;
+    }
+
+    public void SetInfo(BaseSkill skill)
+    {
+        focusedSkill = skill;
+        skillImage.sprite = skill.icon;
+        skillImage.preserveAspect = true;
+        nameText.text = skill.Name;
+        descriptionText.text = skill.Description;
+        currentXpText.text = skill.XpIntoLevel().ToString();
+        requiredXpText.text = skill.ExperienceRequiredForNextLevel.ToString();
+        xpBar.fillAmount = skill.PercentageIntoLevel();
+        infoSet = true;
+    }
+
+    public void RefreshInfo() // Refresh when the skill is changed so that it's up to date.
+    {
+        SetInfo(focusedSkill);
+    }
+
+    public void OpenSkillMenu()
+    {
+        open = true;
+        skillMenu.SetActive(true);
+        HideInfo();
+    }
+
+    public void ToggleSkillMenu()
+    {
+        open = !open;
+        if (open) OpenSkillMenu(); // I could use "SetActive(open)" but I need to run the contents of the "OpenSkillMenu" method.
+        else CloseSkillMenu();
+    }
+
+    public void CloseSkillMenu()
+    {
+        open = false;
+        skillMenu.SetActive(false);
     }
 }

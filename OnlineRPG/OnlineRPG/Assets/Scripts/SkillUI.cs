@@ -1,29 +1,31 @@
 ﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class SkillUI : MonoBehaviour
+public class SkillUI : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Image skillImage;
     [SerializeField] private Image xpBar;
     [SerializeField] private float xpAdditionRate;
 
-    private BaseSkill skill;
+    BaseSkill skill;
+    SkillManager skillMan;
 
     private float xpToAdd = 0;
     private float xpLastUpdate = 0;
-    private bool animating = false;
+    //private bool animating = false;
 
-    public void OpenSkillInfo()
+    void Start()
     {
-
+        skillMan = SkillManager.instance;
     }
 
     public void Setup(BaseSkill skill)
     {
         this.skill = skill;
-        levelText.text = skill.CurrentLevel.ToString();
+        levelText.text = skill.CurrentLevelReal.ToString();
         skillImage.sprite = skill.icon;
         xpBar.fillAmount = skill.PercentageIntoLevel();
         skill.OnExperienceChanged += OnSkillChanged;
@@ -32,7 +34,7 @@ public class SkillUI : MonoBehaviour
 
     void OnSkillChanged()
     {
-        levelText.text = skill.CurrentLevel.ToString();
+        levelText.text = skill.CurrentLevelReal.ToString();
         xpBar.fillAmount = skill.PercentageIntoLevel();
         xpToAdd += (skill.TotalExperience - xpLastUpdate);
         xpLastUpdate = skill.TotalExperience;
@@ -41,6 +43,15 @@ public class SkillUI : MonoBehaviour
         //{
         //    StartCoroutine(AnimateXPBar());
         //}
+    }
+
+    void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Left)
+        {
+            skillMan.SetInfo(skill);
+            skillMan.ShowInfo();
+        }
     }
 
     //IEnumerator AnimateXPBar()

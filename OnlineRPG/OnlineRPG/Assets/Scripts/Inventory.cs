@@ -1,11 +1,17 @@
-﻿using System.Collections.Generic;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class Inventory : MonoBehaviour
 {
+    #region Singleton
+    public static Inventory instance;
+    #endregion
+
+    [SerializeField] private GameObject inventory;
     [SerializeField] private GameObject content;
+    [SerializeField] private GameObject rightMenu;
     [SerializeField] private GameObject inventorySlotPrefab;
     [SerializeField] private GameObject inventoryItemPrefab;
     [SerializeField] private int maxSlots;
@@ -14,6 +20,26 @@ public class Inventory : MonoBehaviour
 
     public List<Item> items = new List<Item>();
     public List<GameObject> slots = new List<GameObject>();
+
+    [SerializeField] private Image itemImage;
+    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI slugText;
+    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TextMeshProUGUI usesText;
+
+    public bool open = false;
+    bool infoSet = false;
+
+    void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogError("Multiple Inventories on client!");
+            return;
+        }
+
+        instance = this;
+    }
 
     void Start()
     {
@@ -25,16 +51,20 @@ public class Inventory : MonoBehaviour
             slots[i].GetComponent<Slot>().id = i;
             items.Add(new Item());
         }
+        
+        CloseInventory();
+        infoSet = false;
     }
 
-    public void AddItem(Item itemToAdd)
+    public void AddItem(Item itemToAdd, int amount)
     {
+        if (amount <= 0) return;
+
         int slotId = GetSlotFromItem(itemToAdd);
         if (itemToAdd.Stackable && slotId != -1)
         {
             ItemData data = slots[slotId].transform.GetChild(0).GetComponent<ItemData>();
-            data.amount++;
-            data.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = data.amount.ToString();
+            data.Amount = data.Amount + amount <= itemToAdd.MaxStack ? data.Amount + amount : itemToAdd.MaxStack;
         }
         else
         {
@@ -47,8 +77,7 @@ public class Inventory : MonoBehaviour
                     ItemData itemData = itemObj.GetComponent<ItemData>();
                     itemData.item = itemToAdd;
                     itemData.slot = i;
-                    itemData.amount = 1;
-                    itemData.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = ""; // By default it shows nothing.
+                    itemData.Amount = (itemData.Amount + amount <= itemToAdd.MaxStack) ? amount : itemToAdd.MaxStack;
                     itemObj.GetComponent<Image>().sprite = itemToAdd.Sprite;
                     itemObj.name = itemToAdd.Slug;
                     break;
@@ -57,15 +86,15 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    public void AddItem(int id)
+    public void AddItem(int id, int amount)
     {
-        AddItem(database.FetchItem(id));
+        AddItem(database.FetchItem(id), amount);
     }
 
-    public void AddItem(string slug)
+    public void AddItem(string slug, int amount)
     {
         if (string.IsNullOrEmpty(slug)) return;
-        AddItem(database.FetchItem(slug));
+        AddItem(database.FetchItem(slug), amount);
     }
 
     public void RemoveItem(Item itemToRemove, int amountToRemove)
@@ -75,12 +104,12 @@ public class Inventory : MonoBehaviour
             if (items[i].Id == itemToRemove.Id)
             {
                 ItemData data = slots[i].transform.GetChild(0).GetComponent<ItemData>();
-                if (amountToRemove >= data.amount)
+                if (amountToRemove >= data.Amount)
                 {
 
                 } else
                 {
-                    data.amount -= amountToRemove;
+                    data.Amount -= amountToRemove;
                 }
             }
         }
@@ -95,6 +124,54 @@ public class Inventory : MonoBehaviour
     public void RemoveItem(int id, int amount)
     {
         RemoveItem(database.FetchItem(id), amount);
+    }
+
+    public void ShowInfo()
+    {
+        if (!infoSet)
+        {
+            Debug.LogError("You must set the Item information before showing it!");
+            return;
+        }
+
+        rightMenu.SetActive(true);
+    }
+
+    public void HideInfo()
+    {
+        infoSet = false;
+        rightMenu.SetActive(false);
+    }
+
+    public void SetInfo(Item item)
+    {
+        itemImage.sprite = item.Sprite;
+        itemImage.preserveAspect = true;
+        nameText.text = item.Name;
+        slugText.text = item.Slug;
+        descriptionText.text = item.Description;
+        usesText.text = $"Uses: {string.Join(", ", item.Uses)}";
+        infoSet = true;
+    }
+
+    public void OpenInventory()
+    {
+        open = true;
+        inventory.SetActive(true);
+        HideInfo();
+    }
+
+    public void ToggleInventory()
+    {
+        open = !open;
+        if (open) OpenInventory(); // I could use "SetActive(open)" but I need to run the contents of the open inventory method.
+        else CloseInventory();
+    }
+
+    public void CloseInventory()
+    {
+        open = false;
+        inventory.SetActive(false);
     }
 
     int GetSlotFromItem(Item item)

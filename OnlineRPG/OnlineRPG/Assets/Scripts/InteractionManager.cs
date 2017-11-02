@@ -1,18 +1,21 @@
-﻿using UnityEngine;
-using TMPro;
-using System.Collections.Generic;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class InteractionManager : MonoBehaviour
 {
+    #region Singleton
     public static InteractionManager instance;
+    #endregion
 
     [SerializeField] private Camera playerCam;
     [SerializeField] private List<Option> baseOptions;
     [SerializeField] private GameObject interactionGO;
     [SerializeField] private GameObject interactionContentGO;
     [SerializeField] private GameObject optionPrefab;
-    private List<Option> options;
+
+    List<Option> options;
 
     void Awake()
     {
@@ -26,10 +29,12 @@ public class InteractionManager : MonoBehaviour
         options = new List<Option>();
     }
 
-    public void SetOptions(List<Option> options)
+    public void SetOptions(List<Option> options, bool useBaseOptions = true)
     {
         this.options.Clear();
-        this.options.AddRange(this.baseOptions);
+        if (useBaseOptions)
+            this.options.AddRange(this.baseOptions);
+
         if (options != null)
         {
             for (int i = 0; i < options.Count; i++)
@@ -48,11 +53,10 @@ public class InteractionManager : MonoBehaviour
         foreach (Option option in options)
         {
             GameObject o = Instantiate(optionPrefab, interactionContentGO.transform, false);
-            //o.GetComponent<RectTransform>().anchoredPosition = playerCam.WorldToScreenPoint(Input.mousePosition);
             o.GetComponentInChildren<TextMeshProUGUI>().text = option.text;
             o.GetComponent<Button>().onClick.AddListener(() =>
             {
-                option.onClick.Invoke();
+                option.onOptionClick.Invoke();
             });
         }
     }

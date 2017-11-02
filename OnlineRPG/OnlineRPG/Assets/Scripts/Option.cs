@@ -4,6 +4,7 @@ using UnityEngine.Events;
 [System.Serializable]
 public class Option
 {
-    [TextArea]public string text;
-    public UnityEvent onClick;
+    //public delegate void OnOptionClickDelegate();
+    [TextArea] public string text;
+    public UnityEvent onOptionClick;
 }

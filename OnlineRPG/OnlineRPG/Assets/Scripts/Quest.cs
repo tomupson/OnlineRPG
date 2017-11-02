@@ -9,6 +9,7 @@ public class Quest : MonoBehaviour
     public string Description { get; set; }
     public int ExperienceReward { get; set; }
     public Item ItemReward { get; set; }
+    public int ItemRewardAmount { get; set; } = 1;
     public bool Completed { get; set; }
 
     public void CheckGoals()
@@ -21,7 +22,7 @@ public class Quest : MonoBehaviour
     {
         if (ItemReward != null)
         {
-            FindObjectOfType<Inventory>().AddItem(ItemReward);
+            FindObjectOfType<Inventory>().AddItem(ItemReward, ItemRewardAmount);
         }
     }
 }

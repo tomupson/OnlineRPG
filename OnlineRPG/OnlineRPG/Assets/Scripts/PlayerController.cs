@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Player))]
@@ -10,9 +9,10 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private Camera playerCam;
     [SerializeField] private GameObject mouseInteractInfoPanel;
+
     Player player;
     Vector3 pointToMove;
-    private Interactable focus;
+    Interactable focus;
 
     void Start()
     {
@@ -36,27 +36,33 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1) && !EventSystem.current.IsPointerOverGameObject())
         {
-            Ray ray = playerCam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
+            GetInteraction();
+        }
+    }
 
-            if (Physics.Raycast(ray, out hit, 100f))
+    void GetInteraction()
+    {
+        Ray ray = playerCam.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, 100f))
+        {
+            GameObject objHit = hit.collider.gameObject;
+            Interactable interactableObjHit = objHit.transform.root.GetComponentInChildren<Interactable>(); // InChildren also seearches the parent.
+
+            if (interactableObjHit != null)
             {
-                GameObject objHit = hit.collider.gameObject;
-                Interactable interactableObjHit = objHit.transform.root.GetComponentInChildren<Interactable>(); // InChildren also seearches the parent.
-
-                if (interactableObjHit != null)
-                {
-                    interactableObjHit.OpenContextMenu();
-                    SetFocus(interactableObjHit);
-                    pointToMove = interactableObjHit.transform.position;
-                } else
-                {
-                    RemoveFocus();
-                    Debug.Log(string.Format("No interactable component found on \"{0}\"", objHit.name));
-                    pointToMove = hit.point;
-                    InteractionManager.instance.SetOptions(null);
-                    InteractionManager.instance.Show();
-                }
+                interactableObjHit.OpenContextMenu();
+                SetFocus(interactableObjHit);
+                pointToMove = interactableObjHit.transform.position;
+            }
+            else
+            {
+                RemoveFocus();
+                Debug.Log(string.Format("No interactable component found on \"{0}\"", objHit.name));
+                pointToMove = hit.point;
+                InteractionManager.instance.SetOptions(null);
+                InteractionManager.instance.Show();
             }
         }
     }
@@ -70,7 +76,7 @@ public class PlayerController : MonoBehaviour
             focus = newFocus;
         }
 
-        newFocus.OnFocus(transform);
+        newFocus.OnFocus(player);
     }
 
     void RemoveFocus()

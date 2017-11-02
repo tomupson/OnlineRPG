@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
-using Newtonsoft.Json;
 using System.Linq;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 public class ItemDatabase : MonoBehaviour
 {
-    private List<Item> database = new List<Item>();
+    List<Item> database = new List<Item>();
 
     void Start()
     {
-        database = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText(Application.dataPath + "/items.json"));
+        database = JsonConvert.DeserializeObject<List<Item>>(File.ReadAllText(Application.dataPath + "/JSON/items.json"));
+
         foreach (Item item in database)
         {
             item.GetSprite();

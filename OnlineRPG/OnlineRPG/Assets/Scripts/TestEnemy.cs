@@ -5,7 +5,7 @@ public class TestEnemy : MonoBehaviour, IEnemy
     public int Id { get; set; }
     public int Experience { get; set; }
 
-    private Player player;
+    Player player;
 
     void Start()
     {
