@@ -11,19 +11,31 @@ public class GameMaster : MonoBehaviour
 
     void Update()
     {
+        BindMenuInputs();
+    }
+
+    void BindMenuInputs()
+    {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Inventory.instance.CloseInventory();
+            Inventory.singleton.CloseInventory();
+            SkillManager.singleton.CloseSkillMenu();
+            QuestBook.singleton.CloseQuestBook();
         }
 
         if (Input.GetKeyDown(Controls.OPEN_INVENTORY))
         {
-            Inventory.instance.ToggleInventory();
+            Inventory.singleton.ToggleInventory();
         }
 
         if (Input.GetKeyDown(Controls.OPEN_SKILLS))
         {
-            SkillManager.instance.ToggleSkillMenu();
+            SkillManager.singleton.ToggleSkillMenu();
+        }
+
+        if (Input.GetKeyDown(Controls.OPEN_QUESTS))
+        {
+            QuestBook.singleton.ToggleQuestBook();
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class Inventory : MonoBehaviour
 {
     #region Singleton
-    public static Inventory instance;
+    public static Inventory singleton;
     #endregion
 
     [SerializeField] private GameObject inventory;
@@ -32,13 +32,13 @@ public class Inventory : MonoBehaviour
 
     void Awake()
     {
-        if (instance != null)
+        if (singleton != null)
         {
             Debug.LogError("Multiple Inventories on client!");
             return;
         }
 
-        instance = this;
+        singleton = this;
     }
 
     void Start()

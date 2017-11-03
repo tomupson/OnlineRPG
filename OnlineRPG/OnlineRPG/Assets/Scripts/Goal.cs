@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public class Goal : MonoBehaviour
+﻿public class Goal
 {
     public Quest Quest { get; set; }
     public string Description { get; set; }

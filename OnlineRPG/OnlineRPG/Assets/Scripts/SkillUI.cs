@@ -19,7 +19,7 @@ public class SkillUI : MonoBehaviour, IPointerClickHandler
 
     void Start()
     {
-        skillMan = SkillManager.instance;
+        skillMan = SkillManager.singleton;
     }
 
     public void Setup(BaseSkill skill)
@@ -27,6 +27,7 @@ public class SkillUI : MonoBehaviour, IPointerClickHandler
         this.skill = skill;
         levelText.text = skill.CurrentLevelReal.ToString();
         skillImage.sprite = skill.icon;
+        skillImage.preserveAspect = true;
         xpBar.fillAmount = skill.PercentageIntoLevel();
         skill.OnExperienceChanged += OnSkillChanged;
         xpLastUpdate = skill.TotalExperience;

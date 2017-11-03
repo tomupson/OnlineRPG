@@ -1,12 +1,14 @@
 ﻿using TMPro;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SkillManager : MonoBehaviour
 {
     #region Singleton
-    public static SkillManager instance;
+    public static SkillManager singleton;
     #endregion
 
     CharacterStats stats;
@@ -32,21 +34,24 @@ public class SkillManager : MonoBehaviour
     bool infoSet;
     public bool open = false;
 
+    Queue<Tuple<BaseSkill, float>> skillXpGainedQueue = new Queue<Tuple<BaseSkill, float>>();
+    bool animating = false;
+
     void Awake()
     {
-        if (instance != null)
+        if (singleton != null)
         {
             Debug.LogError("More than one SkillManager in the scene!");
             return;
         }
 
-        instance = this;
+        singleton = this;
     }
 
     void Start()
     {
         stats = FindObjectOfType<Player>().GetComponent<CharacterStats>();
-        skillXpGained.SetActive(false);
+        animating = false;
 
         CloseSkillMenu();
         infoSet = false;
@@ -77,25 +82,36 @@ public class SkillManager : MonoBehaviour
     public void GrantXPToSkill(BaseSkill skill, float xp)
     {
         skill.GrantXP(xp);
-        StartCoroutine(ShowXPGranted(skill, xp));
+        skillXpGainedQueue.Enqueue(new Tuple<BaseSkill, float>(skill, xp));
+        if (!animating)
+        {
+            StartCoroutine(ShowXPGranted());
+        }
+        animating = true;
     }
 
-    IEnumerator ShowXPGranted(BaseSkill skill, float xp)
+    IEnumerator ShowXPGranted()
     {
-        skillXpGained.SetActive(true);
-        Image img = skillXpGained.GetComponentInChildren<Image>();
-        TextMeshProUGUI txt = skillXpGained.GetComponentInChildren<TextMeshProUGUI>();
-        txt.text = string.Format("+{0}XP", xp);
-        img.sprite = skill.icon;
-        Animator animator = skillXpGained.GetComponent<Animator>();
+        while (skillXpGainedQueue.Count > 0)
+        {
+            Tuple<BaseSkill, float> currentSkillXpGained = skillXpGainedQueue.Dequeue();
+            skillXpGained.SetActive(true);
+            Image img = skillXpGained.GetComponentInChildren<Image>();
+            TextMeshProUGUI txt = skillXpGained.GetComponentInChildren<TextMeshProUGUI>();
+            txt.text = string.Format("+{0}XP", currentSkillXpGained.Item2);
+            img.sprite = currentSkillXpGained.Item1.icon;
+            Animator animator = skillXpGained.GetComponent<Animator>();
 
-        animator.SetBool("IsShowing", true);
+            animator.SetBool("IsShowing", true);
 
-        yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(3f);
 
-        animator.SetBool("IsShowing", false);
+            animator.SetBool("IsShowing", false);
 
-        yield return null;
+            yield return null;
+        }
+
+        animating = false;
     }
 
     public void ShowInfo()
@@ -122,7 +138,7 @@ public class SkillManager : MonoBehaviour
         focusedSkill = skill;
         skillImage.sprite = skill.icon;
         skillImage.preserveAspect = true;
-        nameText.text = skill.Name;
+        nameText.text = $"{skill.Name} lv{skill.CurrentLevelReal}";
         descriptionText.text = skill.Description;
         currentXpText.text = skill.XpIntoLevel().ToString();
         requiredXpText.text = skill.ExperienceRequiredForNextLevel.ToString();
@@ -137,8 +153,8 @@ public class SkillManager : MonoBehaviour
 
     public void OpenSkillMenu()
     {
-        open = true;
         skillMenu.SetActive(true);
+        open = true;
         HideInfo();
     }
 
@@ -151,7 +167,7 @@ public class SkillManager : MonoBehaviour
 
     public void CloseSkillMenu()
     {
-        open = false;
         skillMenu.SetActive(false);
+        open = false;
     }
 }

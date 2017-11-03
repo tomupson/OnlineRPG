@@ -44,7 +44,7 @@ public class TreeInteractable : Interactable
         StartCoroutine(GrowTree());
         //treeGfx.SetActive(false);
         BaseSkill skill = player.stats.skills.Where(x => x.Name == "Woodcutting").FirstOrDefault();
-        SkillManager.instance.GrantXPToSkill(skill, chopXpGain);
+        SkillManager.singleton.GrantXPToSkill(skill, chopXpGain);
 
         //stumpGfx.SetActive(true);
         inventory.AddItem(chopItemSlug, chopItemAmount);
