@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 RemoveFocus();
-                Debug.Log(string.Format("No interactable component found on \"{0}\"", objHit.name));
+                Debug.LogWarning(string.Format("No interactable component found on \"{0}\"", objHit.name));
                 pointToMove = hit.point;
                 InteractionManager.instance.SetOptions(null);
                 InteractionManager.instance.Show();

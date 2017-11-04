@@ -12,7 +12,9 @@ public class QuestBook : MonoBehaviour
 
     [SerializeField] private GameObject questBook;
     [SerializeField] private GameObject questPrefab;
+    [SerializeField] private GameObject goalPrefab;
     [SerializeField] private Transform contentTransform;
+    [SerializeField] private Transform goalsContentTransform;
     [SerializeField] private GameObject rightMenu;
 
     [Space]
@@ -21,14 +23,13 @@ public class QuestBook : MonoBehaviour
     [SerializeField] private Image questImage;
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI descriptionText;
-    [SerializeField] private TextMeshProUGUI currentProgress;
-    [SerializeField] private TextMeshProUGUI requiredProgress;
-    [SerializeField] private Image questProgessBar;
+
+    [SerializeField] private GameObject noQuestsText;
 
     Quest focusedQuest;
 
+    [HideInInspector] public bool open = false;
     bool infoSet = false;
-    public bool open = false;
 
     void Awake()
     {
@@ -67,9 +68,10 @@ public class QuestBook : MonoBehaviour
     public void CreateQuestFor(Quest quest)
     {
         GameObject questGO = Instantiate(questPrefab, contentTransform, false);
-        Debug.Log(questGO);
         QuestUI questUI = questGO.GetComponent<QuestUI>();
         questUI.Setup(quest);
+
+        if (noQuestsText.activeSelf) noQuestsText.SetActive(false);
     }
 
     public void ShowQuestBook()
@@ -77,6 +79,10 @@ public class QuestBook : MonoBehaviour
         questBook.SetActive(true);
         open = true;
         HideInfo();
+        if (stats.quests.Count == 0)
+            noQuestsText.SetActive(true);
+        else
+            noQuestsText.SetActive(false);
     }
 
     public void ToggleQuestBook()
@@ -94,10 +100,20 @@ public class QuestBook : MonoBehaviour
 
     public void SetInfo(Quest quest)
     {
+        ClearChildren(goalsContentTransform);
+
         this.focusedQuest = quest;
         questImage.sprite = quest.Icon;
         nameText.text = quest.Name;
         descriptionText.text = quest.Description;
+
+        foreach (Goal goal in quest.Goals)
+        {
+            GameObject goalGO = Instantiate(goalPrefab, goalsContentTransform, false);
+            GoalUI goalUI = goalGO.GetComponent<GoalUI>();
+            goalUI.Setup(goal);
+        }
+
         rightMenu.SetActive(true);
         infoSet = true;
     }
@@ -123,5 +139,13 @@ public class QuestBook : MonoBehaviour
     {
         rightMenu.SetActive(false);
         infoSet = false;
+    }
+
+    void ClearChildren(Transform transform)
+    {
+        foreach (Transform child in transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }

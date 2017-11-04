@@ -35,7 +35,7 @@ public class Player : MonoBehaviour
     public void FollowTarget(Interactable newTarget)
     {
         InteractionManager.instance.Hide();
-        agent.stoppingDistance = newTarget.radius * 0.8f;
+        agent.stoppingDistance = newTarget.radius * 0.7f;
         agent.updateRotation = false;
         target = newTarget.interactionTransform;
     }

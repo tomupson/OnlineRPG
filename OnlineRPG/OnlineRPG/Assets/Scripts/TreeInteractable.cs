@@ -18,17 +18,17 @@ public class TreeInteractable : Interactable
     public string chopItemSlug;
     public int chopItemAmount;
 
+    MeshCollider treeCollider;
+
     void Start()
     {
         inventory = FindObjectOfType<Inventory>();
+        treeCollider = GetComponent<MeshCollider>();
     }
 
     public override void OpenContextMenu()
     {
-        interactOptions.ForEach((i) =>
-        {
-            i.text = i.text.Replace("<name>", interactableName);
-        });
+        InteractionHelper.FormatOptions(this, ref interactOptions);
 
         InteractionManager.instance.SetOptions(interactOptions);
         base.OpenContextMenu();
@@ -41,19 +41,22 @@ public class TreeInteractable : Interactable
 
     void ChopTree()
     {
+        treeGfx.SetActive(false);
+        treeCollider.enabled = false;
+        stumpGfx.SetActive(true);
+
         StartCoroutine(GrowTree());
-        //treeGfx.SetActive(false);
         BaseSkill skill = player.stats.skills.Where(x => x.Name == "Woodcutting").FirstOrDefault();
         SkillManager.singleton.GrantXPToSkill(skill, chopXpGain);
 
-        //stumpGfx.SetActive(true);
         inventory.AddItem(chopItemSlug, chopItemAmount);
     }
 
     IEnumerator GrowTree()
     {
         yield return new WaitForSeconds(Random.Range(treeRegrowTimeMin, treeRegrowTimeMax));
-        //treeGfx.SetActive(true);
-        //stumpGfx.SetActive(false);
+        treeGfx.SetActive(true);
+        treeCollider.enabled = true;
+        stumpGfx.SetActive(false);
     }
 }

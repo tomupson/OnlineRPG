@@ -7,11 +7,7 @@ public class NPCInteractable : Interactable
 
     public override void OpenContextMenu()
     {
-        interactOptions.ForEach((i) =>
-        {
-            i.text = i.text.Replace("<name>", interactableName);
-        });
-
+        InteractionHelper.FormatOptions(this, ref interactOptions);
         InteractionManager.instance.SetOptions(interactOptions);
 
         base.OpenContextMenu();

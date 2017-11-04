@@ -21,15 +21,16 @@ public abstract class Interactable : MonoBehaviour
 
     [Tooltip("The name of the interactable.")] public string interactableName;
 
-    bool isFocused = false;
+    bool isMoving = false;
     bool hasArrived = false;
+
     OnInteractableReachedDelegate onInteractableReached;
 
     [HideInInspector] public Player player;
 
     void Update()
     {
-        if (isFocused && !hasArrived)
+        if (isMoving && !hasArrived)
         {
             float distance = Vector3.Distance(player.transform.position, transform.position);
             if (distance <= radius)
@@ -40,6 +41,7 @@ public abstract class Interactable : MonoBehaviour
                 }
 
                 hasArrived = true;
+                isMoving = false;
             }
         }
     }
@@ -51,18 +53,19 @@ public abstract class Interactable : MonoBehaviour
 
     public void OnFocus(Player player)
     {
-        isFocused = true;
         this.player = player;
     }
 
     public void OnDefocus()
     {
-        isFocused = false;
         this.player = null;
+        isMoving = false;
+        hasArrived = false;
     }
 
     public void MoveToInteractable(OnInteractableReachedDelegate onInteractableReached)
     {
+        isMoving = true;
         this.onInteractableReached = onInteractableReached;
         hasArrived = false;
 

@@ -31,8 +31,8 @@ public class SkillManager : MonoBehaviour
 
     BaseSkill focusedSkill;
 
+    [HideInInspector] public bool open = false;
     bool infoSet;
-    public bool open = false;
 
     Queue<Tuple<BaseSkill, float>> skillXpGainedQueue = new Queue<Tuple<BaseSkill, float>>();
     bool animating = false;

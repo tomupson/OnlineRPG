@@ -27,7 +27,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI usesText;
 
-    public bool open = false;
+    [HideInInspector] public bool open = false;
     bool infoSet = false;
 
     void Awake()
@@ -150,7 +150,7 @@ public class Inventory : MonoBehaviour
         nameText.text = item.Name;
         slugText.text = item.Slug;
         descriptionText.text = item.Description;
-        usesText.text = $"Uses: {string.Join(", ", item.Uses)}";
+        usesText.text = item.Uses.Count > 0 ? $"Uses: {string.Join(", ", item.Uses)}" : "Uses: None";
         infoSet = true;
     }
 

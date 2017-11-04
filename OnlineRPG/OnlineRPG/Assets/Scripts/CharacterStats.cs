@@ -11,9 +11,9 @@ public class CharacterStats : MonoBehaviour
 
     void Start()
     {
-        skills.ForEach((i) =>
+        skills.ForEach((skill) =>
         {
-            SkillManager.singleton.CreateSkillFor(i);
+            SkillManager.singleton.CreateSkillFor(skill);
         });
     }
 
