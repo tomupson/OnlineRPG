@@ -7,7 +7,7 @@
     "slug": "item_logs",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 1,
@@ -17,7 +17,7 @@
     "slug": "item_logs_acadia",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 2,
@@ -27,7 +27,7 @@
     "slug": "item_logs_arctic_pine",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 3,
@@ -37,7 +37,7 @@
     "slug": "item_logs_eucalyptus",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 4,
@@ -47,7 +47,7 @@
     "slug": "item_logs_magic",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 5,
@@ -57,7 +57,7 @@
     "slug": "item_logs_mahogany",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 6,
@@ -67,7 +67,7 @@
     "slug": "item_logs_maple",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 7,
@@ -77,7 +77,7 @@
     "slug": "item_logs_oak",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 8,
@@ -87,7 +87,7 @@
     "slug": "item_logs_teak",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   },
   {
     "id": 9,
@@ -97,6 +97,6 @@
     "slug": "item_logs_willow",
     "maxStack": "99",
     "uses": [ "Firemaking", "Construction", "Fletching" ],
-    "interactOptions": [ "Light Fire" ]
+    "type": "wood"
   }
 ]

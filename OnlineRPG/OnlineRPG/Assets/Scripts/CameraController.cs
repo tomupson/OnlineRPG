@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 
 public class CameraController : MonoBehaviour
 {
-    public Transform target;
+    Transform target;
 
     public Vector3 offset;
     public float zoomSpeed = 4f;
@@ -16,6 +16,11 @@ public class CameraController : MonoBehaviour
 
     public float yawSpeed = 100f;
     private float currentYaw = 0f;
+
+    void Start()
+    {
+        target = GetComponentInParent<Player>().transform;
+    }
 
     void Update()
     {
