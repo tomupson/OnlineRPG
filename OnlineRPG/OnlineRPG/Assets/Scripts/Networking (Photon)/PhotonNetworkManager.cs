@@ -1,33 +1,59 @@
 ﻿using TMPro;
 using Photon;
 using UnityEngine;
+using System;
+using UnityEngine.SceneManagement;
 
 public class PhotonNetworkManager : Photon.MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI connectedText;
+    [SerializeField] private TextMeshProUGUI connectionStatusText;
     [SerializeField] private GameObject player;
-    [SerializeField] private GameObject lobbyCamera;
-    [SerializeField] private Transform spawnPoint;
-    
+    //[SerializeField] private GameObject lobbyCamera;
+    //[SerializeField] private Transform spawnPoint;
+
+    void Awake()
+    {
+        PhotonNetwork.autoJoinLobby = false;
+        PhotonNetwork.automaticallySyncScene = true;
+        SceneManager.sceneLoaded += OnSceneFinishedLoading;
+    }
+
     void Start()
     {
-        PhotonNetwork.ConnectUsingSettings(Constants.BUILD_VERSION);
+        Connect();
     }
 
     void Update()
     {
-        connectedText.text = PhotonNetwork.connectionStateDetailed.ToString();
+        if (connectionStatusText != null)
+        {
+            connectionStatusText.text = PhotonNetwork.connectionStateDetailed.ToString();
+        }
     }
 
-    public virtual void OnJoinedLobby()
+    public void Connect()
     {
-        Debug.Log("Joined lobby.");
-        PhotonNetwork.JoinOrCreateRoom("Lobby", null, null);
+        PhotonNetwork.ConnectUsingSettings(Constants.BUILD_VERSION);
     }
 
-    public virtual void OnJoinedRoom()
+    void OnConnectedToMaster()
     {
-        PhotonNetwork.Instantiate(player.name, spawnPoint.position, Quaternion.identity, 0);
-        lobbyCamera.SetActive(false);
+        Debug.Log("Connected to Master");
+        PhotonNetwork.JoinLobby();
+    }
+
+    void OnJoinedLobby()
+    {
+        Debug.Log("Joined Lobby.");
+    }
+
+    void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Level")
+        {
+            // Spawn Pos is temporary until a database is made.
+            PhotonNetwork.Instantiate(player.name, new Vector3(0, 5, 0), Quaternion.identity, 0);
+            //lobbyCamera.SetActive(false);
+        }
     }
 }

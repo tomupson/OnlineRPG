@@ -602,7 +602,7 @@ PlayerSettings:
   cloudServicesEnabled:
     UNet: 1
   facebookSdkVersion: 7.9.4
-  apiCompatibilityLevel: 2
+  apiCompatibilityLevel: 3
   cloudProjectId: 0e77d94a-2943-40fb-8a78-675cf6bcb71f
   projectName: OnlineRPG
   organizationId: uppy-1649132

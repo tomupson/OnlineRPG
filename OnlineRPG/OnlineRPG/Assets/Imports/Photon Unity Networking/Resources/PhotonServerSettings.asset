@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AppID: 83765a7d-a317-4191-aa72-223868e3dfb3
   VoiceAppID: 
-  ChatAppID: 
+  ChatAppID: 73f8eba2-3323-4e6d-8934-10c186444621
   HostType: 1
   PreferredRegion: 0
   EnabledRegions: -1
@@ -21,9 +21,9 @@ MonoBehaviour:
   ServerAddress: 
   ServerPort: 5055
   VoiceServerPort: 5055
-  JoinLobby: 1
+  JoinLobby: 0
   EnableLobbyStatistics: 0
-  PunLogging: 1
+  PunLogging: 0
   NetworkLogging: 1
   RunInBackground: 1
   RpcList:
