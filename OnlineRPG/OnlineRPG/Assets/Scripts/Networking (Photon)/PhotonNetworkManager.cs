@@ -1,15 +1,11 @@
 ﻿using TMPro;
-using Photon;
 using UnityEngine;
-using System;
 using UnityEngine.SceneManagement;
 
 public class PhotonNetworkManager : Photon.MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI connectionStatusText;
     [SerializeField] private GameObject player;
-    //[SerializeField] private GameObject lobbyCamera;
-    //[SerializeField] private Transform spawnPoint;
 
     void Awake()
     {
@@ -39,12 +35,13 @@ public class PhotonNetworkManager : Photon.MonoBehaviour
     void OnConnectedToMaster()
     {
         Debug.Log("Connected to Master");
+        PhotonNetwork.playerName = NetworkPlayer.singleton.Username;
         PhotonNetwork.JoinLobby();
     }
 
     void OnJoinedLobby()
     {
-        Debug.Log("Joined Lobby.");
+        Debug.Log("Joined Lobby.");        
     }
 
     void OnSceneFinishedLoading(Scene scene, LoadSceneMode mode)
@@ -53,7 +50,6 @@ public class PhotonNetworkManager : Photon.MonoBehaviour
         {
             // Spawn Pos is temporary until a database is made.
             PhotonNetwork.Instantiate(player.name, new Vector3(0, 5, 0), Quaternion.identity, 0);
-            //lobbyCamera.SetActive(false);
         }
     }
 }

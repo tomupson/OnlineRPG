@@ -50,7 +50,7 @@ public class SkillManager : MonoBehaviour
 
     void Start()
     {
-        stats = FindObjectOfType<Player>().GetComponent<CharacterStats>();
+        stats = Player.LocalPlayer.GetComponent<CharacterStats>();
         animating = false;
 
         CloseSkillMenu();

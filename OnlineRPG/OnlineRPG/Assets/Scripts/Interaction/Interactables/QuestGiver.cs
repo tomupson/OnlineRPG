@@ -43,7 +43,7 @@ public class QuestGiver : Interactable, IInteractable
             if (quest != null)
             {
                 Debug.Log("Given Player Quest: " + quest.Name);
-                FindObjectOfType<Player>().GetComponent<CharacterStats>().AddQuest(quest);
+                Player.LocalPlayer.GetComponent<CharacterStats>().AddQuest(quest);
                 hasGivenQuest = true;
             }
         }

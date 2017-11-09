@@ -7,6 +7,8 @@ public class UI_Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
     Vector2 offset;
     CanvasGroup canvasGroup;
 
+    [SerializeField] private Transform target;
+
     void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -14,14 +16,16 @@ public class UI_Draggable : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
     void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
     {
+        if (target == null) target = transform;
+
         offset = eventData.position - (Vector2)transform.parent.parent.position;
-        transform.parent.parent.position = eventData.position - offset;
+        target.position = eventData.position - offset;
         canvasGroup.blocksRaycasts = false;
     }
 
     void IDragHandler.OnDrag(PointerEventData eventData)
     {
-        transform.parent.parent.position = eventData.position - offset;
+        target.position = eventData.position - offset;
     }
 
     void IEndDragHandler.OnEndDrag(PointerEventData eventData)

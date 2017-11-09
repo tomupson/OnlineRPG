@@ -44,7 +44,7 @@ public class QuestBook : MonoBehaviour
 
     void Start()
     {
-        stats = FindObjectOfType<Player>().GetComponent<CharacterStats>();
+        stats = Player.LocalPlayer.GetComponent<CharacterStats>();
         stats.OnQuestAdded += CreateQuestFor;
         CloseQuestBook();
         infoSet = false;

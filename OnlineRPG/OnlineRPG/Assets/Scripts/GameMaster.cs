@@ -37,5 +37,10 @@ public class GameMaster : MonoBehaviour
         {
             QuestBook.singleton.ToggleQuestBook();
         }
+
+        if (Input.GetKeyDown(Controls.OPEN_CHAT))
+        {
+            Chat.singleton.ToggleChat();
+        }
     }
 }

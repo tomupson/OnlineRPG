@@ -11,6 +11,22 @@ public class Player : MonoBehaviour
     NavMeshAgent agent;
     Transform target;
 
+    PhotonView photonView;
+    public static GameObject LocalPlayer { get; set; }
+
+    void Awake()
+    {
+        photonView = PhotonView.Get(this);
+        if (photonView.isMine)
+        {
+            LocalPlayer = gameObject;
+            if (EventHandler.OnPlayerJoinedRoom != null)
+            {
+                EventHandler.OnPlayerJoinedRoom.Invoke(PhotonNetwork.player);
+            }
+        }
+    }
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();

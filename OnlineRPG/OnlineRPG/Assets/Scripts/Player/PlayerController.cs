@@ -65,8 +65,10 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out hit, 100f))
         {
             GameObject objHit = hit.collider.gameObject;
-            Interactable interactableObjHit = objHit.transform.root.GetComponentInChildren<Interactable>(); // InChildren also seearches the parent.
+            if (objHit == Player.LocalPlayer) return;
 
+            Interactable interactableObjHit = objHit.transform.root.GetComponentInChildren<Interactable>(); // InChildren also seearches the parent.
+            
             if (interactableObjHit != null)
             {
                 interactableObjHit.GetComponent<IInteractable>().OpenContextMenu();

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using ExitGames.Client.Photon.Chat;
 
 public class NetworkLobby : MonoBehaviour
 {
@@ -34,13 +35,12 @@ public class NetworkLobby : MonoBehaviour
 
     void PickRandomRoom()
     {
-        RoomInfo[] rooms = PhotonNetwork.GetRoomList();
-        if (rooms.Length == 0) return;
-        selectedRoom = rooms[new System.Random().Next(0, rooms.Length)];
+        if (roomList.Count == 0) return;
+        NetworkRoomUI roomUI = roomList[new System.Random().Next(0, roomList.Count)];
+        selectedRoom = roomUI.roomInfo;
 
         if (selectedRoom.IsOpen && selectedRoom.PlayerCount < selectedRoom.MaxPlayers)
         {
-            NetworkRoomUI roomUI = roomList.Where(x => x.roomInfo == selectedRoom).FirstOrDefault();
             if (roomUI != null)
             {
                 roomUI.GetComponent<Image>().color = selectedRoomImageColor;
@@ -102,6 +102,7 @@ public class NetworkLobby : MonoBehaviour
     {
         Debug.Log("Joined room");
         PhotonNetwork.LoadLevel("Level");
+        //ChatHandler.singleton.SetOnlineStatus(ChatUserStatus.Playing, PhotonNetwork.room.Name);
     }
 
     void OnPhotonCreateRoomFailed(object[] codeAndMessage)

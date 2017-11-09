@@ -112,6 +112,8 @@ public abstract class Interactable : MonoBehaviour
     #region Cursor
     private void OnMouseOver()
     {
+        if (gameObject == Player.LocalPlayer) return;
+
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             Cursor.SetCursor(hoverCursor, Vector2.zero, CursorMode.ForceSoftware);

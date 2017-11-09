@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
-public class Inventory : MonoBehaviour
+public class Inventory : MonoBehaviour, IPunObservable
 {
     #region Singleton
     public static Inventory singleton;
@@ -66,6 +66,10 @@ public class Inventory : MonoBehaviour
         {
             ItemData data = slots[slotId].transform.GetChild(0).GetComponent<ItemData>();
             data.Amount = data.Amount + amount <= itemToAdd.MaxStack ? data.Amount + amount : itemToAdd.MaxStack;
+            if (EventHandler.OnInventoryItemAdded != null)
+            {
+                EventHandler.OnInventoryItemAdded.Invoke(itemToAdd);
+            }
             return true;
         }
         else
@@ -93,6 +97,11 @@ public class Inventory : MonoBehaviour
                     }
 
                     itemObj.name = itemToAdd.Slug;
+
+                    if (EventHandler.OnInventoryItemAdded != null)
+                    {
+                        EventHandler.OnInventoryItemAdded.Invoke(itemToAdd);
+                    }
                     return true;
                 }
             }
@@ -125,6 +134,10 @@ public class Inventory : MonoBehaviour
                 } else
                 {
                     data.Amount -= amountToRemove;
+                    if (EventHandler.OnInventoryItemRemoved != null)
+                    {
+                        EventHandler.OnInventoryItemRemoved.Invoke(itemToRemove);
+                    }
                 }
             }
         }
@@ -197,5 +210,16 @@ public class Inventory : MonoBehaviour
         }
 
         return -1;
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.isWriting)
+        {
+            stream.SendNext(items);
+        } else
+        {
+            items = (List<Item>)stream.ReceiveNext();
+        }
     }
 }

@@ -15,7 +15,7 @@
     public override void Init()
     {
         base.Init();
-        CombatEvents.OnEnemyDeath += EnemyDied;
+        EventHandler.OnEnemyDeath += EnemyDied;
     }
 
     void EnemyDied(IEnemy enemy)

@@ -4,15 +4,15 @@ using UnityEngine;
 public class NetworkRoomUI : MonoBehaviour
 {
     #region Delegates
-    public delegate void OnJoinRoomClickedDelegate(RoomInfo roomInfo);
+    public delegate void OnRoomSelectedDelegate(RoomInfo roomInfo);
     #endregion
 
-    private OnJoinRoomClickedDelegate OnRoomSelectedCallback;
+    private OnRoomSelectedDelegate OnRoomSelectedCallback;
     public RoomInfo roomInfo;
 
     [SerializeField] private TextMeshProUGUI roomNameText;
 
-    public void Setup(RoomInfo roomInfo, OnJoinRoomClickedDelegate OnRoomSelectedCallback)
+    public void Setup(RoomInfo roomInfo, OnRoomSelectedDelegate OnRoomSelectedCallback)
     {
         this.roomInfo = roomInfo;
         this.OnRoomSelectedCallback = OnRoomSelectedCallback;
