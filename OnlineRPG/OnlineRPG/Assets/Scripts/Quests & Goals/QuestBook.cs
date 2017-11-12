@@ -21,8 +21,8 @@ public class QuestBook : MonoBehaviour
 
     [Header("Info")]
     [SerializeField] private Image questImage;
-    [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private TextMeshProUGUI descriptionText;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text descriptionText;
 
     [SerializeField] private GameObject noQuestsText;
 

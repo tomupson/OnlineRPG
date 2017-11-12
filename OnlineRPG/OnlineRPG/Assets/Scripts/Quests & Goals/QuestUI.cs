@@ -7,7 +7,7 @@ public class QuestUI : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] private Image questImage;
     [SerializeField] private Image progressBar;
-    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TMP_Text nameText;
 
     Quest quest;
     QuestBook questBook;

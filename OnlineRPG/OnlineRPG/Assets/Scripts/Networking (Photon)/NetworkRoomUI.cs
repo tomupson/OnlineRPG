@@ -10,7 +10,7 @@ public class NetworkRoomUI : MonoBehaviour
     private OnRoomSelectedDelegate OnRoomSelectedCallback;
     public RoomInfo roomInfo;
 
-    [SerializeField] private TextMeshProUGUI roomNameText;
+    [SerializeField] private TMP_Text roomNameText;
 
     public void Setup(RoomInfo roomInfo, OnRoomSelectedDelegate OnRoomSelectedCallback)
     {

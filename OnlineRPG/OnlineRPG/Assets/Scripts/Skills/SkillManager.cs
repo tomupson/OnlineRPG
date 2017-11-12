@@ -23,10 +23,10 @@ public class SkillManager : MonoBehaviour
 
     [Header("Info")]
     [SerializeField] private Image skillImage;
-    [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private TextMeshProUGUI descriptionText;
-    [SerializeField] private TextMeshProUGUI currentXpText;
-    [SerializeField] private TextMeshProUGUI requiredXpText;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text descriptionText;
+    [SerializeField] private TMP_Text currentXpText;
+    [SerializeField] private TMP_Text requiredXpText;
     [SerializeField] private Image xpBar;
 
     BaseSkill focusedSkill;
@@ -97,7 +97,7 @@ public class SkillManager : MonoBehaviour
             Tuple<BaseSkill, float> currentSkillXpGained = skillXpGainedQueue.Dequeue();
             skillXpGained.SetActive(true);
             Image img = skillXpGained.GetComponentInChildren<Image>();
-            TextMeshProUGUI txt = skillXpGained.GetComponentInChildren<TextMeshProUGUI>();
+            TMP_Text txt = skillXpGained.GetComponentInChildren<TMP_Text>();
             txt.text = string.Format("+{0}XP", currentSkillXpGained.Item2);
             img.sprite = currentSkillXpGained.Item1.icon;
             Animator animator = skillXpGained.GetComponent<Animator>();

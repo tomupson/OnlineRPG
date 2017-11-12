@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using UnityEngine;
+using ExitGames.Client.Photon;
 using System.Collections.Generic;
 using ExitGames.Client.Photon.Chat;
-using ExitGames.Client.Photon;
-using System;
 
 public class ChatHandler : MonoBehaviour, IChatClientListener
 {
@@ -17,8 +16,8 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
     bool subscribedToRoomChannels = false;
     string roomChannelName;
 
-    Queue<string> messageQueue = new Queue<string>();
     List<ChatFriend> friendsList = new List<ChatFriend>();
+    Dictionary<ChatChannel, List<ChatSenderMessage>> channelsAndMessages = new Dictionary<ChatChannel, List<ChatSenderMessage>>();
 
     void Awake()
     {
@@ -32,18 +31,19 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
 
         chatClient = new ChatClient(this);
         chatClient.ChatRegion = "EU";
-        Connect();
-    }
-
-    public ChatChannel GetChannelByName(string name)
-    {
-        return GetChannels().Where(x => x.Name == name).FirstOrDefault();
     }
 
     void Start()
     {
+        LoadFriendsList();
+    }
+
+    void LoadFriendsList()
+    {
         string friendsString = PlayerPrefs.GetString("FriendList");
+        if (friendsString.Length <= 0) return;
         string[] friends = friendsString.Split(';');
+
         foreach (string friend in friends)
         {
             friendsList.Add(new ChatFriend()
@@ -53,16 +53,33 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
                 StatusMessage = ""
             });
         }
+    }
 
-        foreach (string name in friendsList.Select(x => x.Name).ToArray())
-        {
-            Debug.Log(name);
-        }
+    public ChatChannel GetChannelByName(string name)
+    {
+        ChatChannel channel;
+        chatClient.TryGetChannel(name, out channel);
+        return channel;
     }
 
     public List<ChatChannel> GetChannels()
     {
         return chatClient.PublicChannels.Select(x => x.Value).ToList();
+    }
+
+    public List<ChatFriend> GetAllFriends()
+    {
+        return friendsList;
+    }
+
+    public List<ChatSenderMessage> GetMessagesFromChannel(string channelName)
+    {
+        ChatChannel channel = GetChannelByName(channelName);
+        if (channel != null)
+        {
+            return channelsAndMessages[channel];
+        }
+        return null;
     }
 
     void Update()
@@ -96,7 +113,7 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
     {
         subscribedToRoomChannels = true;
 
-        roomChannelName = "Room " + PhotonNetwork.room.Name.GetHashCode();
+        roomChannelName = "room " + PhotonNetwork.room.Name.GetHashCode();
         chatClient.Subscribe(new string[] { roomChannelName });
     }
 
@@ -107,7 +124,7 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
             UserId = PhotonNetwork.player.UserId
         };
 
-        chatClient.Connect(Constants.PHOTON_CHAT_APP_ID, "1.0", authenticationValues);
+        chatClient.Connect(PhotonNetwork.PhotonServerSettings.ChatAppID, "1.0", authenticationValues);
     }
 
     public void DebugReturn(DebugLevel level, string message)
@@ -117,36 +134,40 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
 
     public void OnDisconnected()
     {
-        Debug.Log("Disconnected");
+        //Debug.Log("Disconnected");
     }
 
     public void OnConnected()
     {
-        Debug.Log("Connected");
+        //Debug.Log("Connected");
         connected = true;
         chatClient.Subscribe(new string[] { "global" });
         chatClient.SetOnlineStatus(ChatUserStatus.Online);
+        if (EventHandler.OnChatClientConnected != null)
+            EventHandler.OnChatClientConnected.Invoke();
     }
 
     public void OnChatStateChange(ChatState state)
     {
-        Debug.Log("Chat State Changed");
+        if (EventHandler.OnChatStateChanged != null)
+        {
+            EventHandler.OnChatStateChanged.Invoke(state);
+        }
     }
 
     public void OnGetMessages(string channelName, string[] senders, object[] messages)
     {
+        List<ChatSenderMessage> senderWithMessage = new List<ChatSenderMessage>();
         for (int i = 0; i < senders.Length; i++)
         {
-            string message = "[" + GetReadableChannelName(channelName) + "]" +
-                senders[i] + ": " +
-                messages[i];
-
-            messageQueue.Enqueue(message);
+            senderWithMessage.Add(new ChatSenderMessage(senders[i], messages[i]));
         }
 
-        while (messageQueue.Count > 10)
+        channelsAndMessages[GetChannelByName(channelName)].AddRange(senderWithMessage);
+
+        if (EventHandler.OnChatMessagesReceived != null)
         {
-            messageQueue.Dequeue();
+            EventHandler.OnChatMessagesReceived.Invoke(channelName, senders, messages);
         }
     }
 
@@ -168,19 +189,29 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
 
     public void AddFriend(string friendName)
     {
+        // If nothing was entered.
         if (string.IsNullOrEmpty(friendName)) return;
 
+        // If the friends list already contains the friend you're trying to add.
         if (friendsList.Find(x => x.Name == friendName) != null) return;
 
         chatClient.AddFriends(new string[] { friendName });
-        friendsList.Add(new ChatFriend()
+
+        ChatFriend newFriend = new ChatFriend()
         {
             Name = friendName,
             Status = 0,
             StatusMessage = ""
-        });
+        };
+
+        friendsList.Add(newFriend);
 
         PlayerPrefs.SetString("FriendList", string.Join(";", GetFriendListNames()));
+
+        if (EventHandler.OnChatFriendAdded != null)
+        {
+            EventHandler.OnChatFriendAdded.Invoke(newFriend);
+        }
     }
 
     public void RemoveFriend(string friendName)
@@ -190,9 +221,15 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
         if (friendsList.Find(x => x.Name == friendName) == null) return;
 
         chatClient.RemoveFriends(new string[] { friendName });
-        friendsList.Remove(friendsList.Where(x => x.Name == friendName).FirstOrDefault());
+        ChatFriend friendRemoved = friendsList.Where(x => x.Name == friendName).FirstOrDefault();
+        friendsList.Remove(friendRemoved);
 
         PlayerPrefs.SetString("FriendList", string.Join(";", GetFriendListNames()));
+
+        if (EventHandler.OnChatFriendRemoved != null)
+        {
+            EventHandler.OnChatFriendRemoved.Invoke(friendRemoved);
+        }
     }
 
     string[] GetFriendListNames()
@@ -202,10 +239,14 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
 
     public void OnSubscribed(string[] channels, bool[] results)
     {
-        Debug.Log("On Subscribed");
         for (int i = 0; i < channels.Length; i++)
         {
-            Debug.Log($"{channels[i]}: {results[i]}");
+            if (results[i])
+            {
+                //Debug.Log($"Successfully subscribed to {channels[i]}");
+                channelsAndMessages.Add(GetChannelByName(channels[i]), new List<ChatSenderMessage>());
+            }
+            //else Debug.LogWarning($"Failed to subscribe to {channels[i]}");
         }
     }
 
@@ -216,6 +257,21 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
 
     public void OnStatusUpdate(string user, int status, bool gotMessage, object message)
     {
-        Debug.Log("On Status Update");
+        if (EventHandler.OnChatUserStatusUpdated != null)
+        {
+            EventHandler.OnChatUserStatusUpdated.Invoke(user, status, gotMessage, message);
+        }
+    }
+}
+
+public struct ChatSenderMessage
+{
+    public readonly string sender;
+    public readonly object message;
+
+    public ChatSenderMessage(string sender, object message)
+    {
+        this.sender = sender;
+        this.message = message;
     }
 }

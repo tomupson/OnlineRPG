@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class SkillUI : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TMP_Text levelText;
     [SerializeField] private Image skillImage;
     [SerializeField] private Image xpBar;
     [SerializeField] private float xpAdditionRate;

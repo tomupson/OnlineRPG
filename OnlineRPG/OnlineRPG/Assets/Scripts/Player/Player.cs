@@ -50,7 +50,6 @@ public class Player : MonoBehaviour
 
     public void FollowTarget(Interactable newTarget)
     {
-        Debug.Log("Following");
         InteractionManager.singleton.Hide();
         agent.stoppingDistance = newTarget.radius * 0.7f;
         agent.updateRotation = false;

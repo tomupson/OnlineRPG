@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using TMPro;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
@@ -9,13 +10,14 @@ public class NetworkLobby : MonoBehaviour
     [SerializeField] private Transform content;
     [SerializeField] private GameObject roomUIPrefab;
     [SerializeField] private Color selectedRoomImageColor;
+    [SerializeField] private TMP_Text noRoomsText;
 
     private List<NetworkRoomUI> roomList = new List<NetworkRoomUI>();
     RoomInfo selectedRoom;
 
     void OnReceivedRoomListUpdate()
     {
-        Debug.Log("Update Room List");
+        //Debug.Log("Update Room List");
         ClearRoomList();
 
         RoomInfo[] rooms = PhotonNetwork.GetRoomList();
@@ -29,6 +31,9 @@ public class NetworkLobby : MonoBehaviour
                 roomList.Add(roomUI);
             }
         }
+
+        if (roomList.Count == 0) noRoomsText.gameObject.SetActive(true);
+        else noRoomsText.gameObject.SetActive(false);
 
         CheckSelectedRoom();
     }
@@ -78,12 +83,15 @@ public class NetworkLobby : MonoBehaviour
         if (selectedRoom != null)
         {
             PhotonNetwork.JoinRoom(selectedRoom.Name);
+        } else
+        {
+            Debug.Log("No Room selected!");
         }
     }
 
     public void CreateRoom()
     {
-        RoomOptions roomOptions = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = 20 };
+        RoomOptions roomOptions = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = 20, PublishUserId = true };
         if (PhotonNetwork.CreateRoom("EU", roomOptions, TypedLobby.Default))
         {
             Debug.Log("CreateRoom request sent successfully.");
@@ -102,7 +110,6 @@ public class NetworkLobby : MonoBehaviour
     {
         Debug.Log("Joined room");
         PhotonNetwork.LoadLevel("Level");
-        //ChatHandler.singleton.SetOnlineStatus(ChatUserStatus.Playing, PhotonNetwork.room.Name);
     }
 
     void OnPhotonCreateRoomFailed(object[] codeAndMessage)

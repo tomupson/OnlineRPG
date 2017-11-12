@@ -6,9 +6,9 @@ public class GoalUI : MonoBehaviour
 {
     Goal goal;
 
-    [SerializeField] private TextMeshProUGUI descriptionText;
-    [SerializeField] private TextMeshProUGUI currentProgressText;
-    [SerializeField] private TextMeshProUGUI requiredProgressText;
+    [SerializeField] private TMP_Text descriptionText;
+    [SerializeField] private TMP_Text currentProgressText;
+    [SerializeField] private TMP_Text requiredProgressText;
     [SerializeField] private Image progressBar;
 
     public void Setup(Goal goal)

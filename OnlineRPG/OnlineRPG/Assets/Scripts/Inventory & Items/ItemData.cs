@@ -17,7 +17,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         } set
         {
             amount = value;
-            TextMeshProUGUI txt = GetComponentInChildren<TextMeshProUGUI>();
+            TMP_Text txt = GetComponentInChildren<TMP_Text>();
             if (value <= 1)
             {
                 txt.text = "";

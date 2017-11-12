@@ -7,11 +7,11 @@ public class Tooltip : MonoBehaviour
 
     Item item;
     string data;
-    TextMeshProUGUI tooltipText;
+    TMP_Text tooltipText;
 
     void Start()
     {
-        tooltipText = tooltip.GetComponentInChildren<TextMeshProUGUI>();
+        tooltipText = tooltip.GetComponentInChildren<TMP_Text>();
     }
     
     void Update()

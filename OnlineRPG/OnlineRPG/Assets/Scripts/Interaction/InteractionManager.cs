@@ -58,7 +58,7 @@ public class InteractionManager : MonoBehaviour
         foreach (Option option in options)
         {
             GameObject o = Instantiate(optionPrefab, interactionContentGO.transform, false);
-            o.GetComponentInChildren<TextMeshProUGUI>().text = option.Text;
+            o.GetComponentInChildren<TMP_Text>().text = option.Text;
             o.GetComponent<Button>().onClick.AddListener(() =>
             {
                 if (option.OnOptionClick != null)

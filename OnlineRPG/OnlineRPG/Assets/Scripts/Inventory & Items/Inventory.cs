@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Inventory : MonoBehaviour, IPunObservable
 {
@@ -23,10 +24,10 @@ public class Inventory : MonoBehaviour, IPunObservable
     public List<GameObject> slots = new List<GameObject>();
 
     [SerializeField] private Image itemImage;
-    [SerializeField] private TextMeshProUGUI nameText;
-    [SerializeField] private TextMeshProUGUI slugText;
-    [SerializeField] private TextMeshProUGUI descriptionText;
-    [SerializeField] private TextMeshProUGUI usesText;
+    [SerializeField] private TMP_Text nameText;
+    [SerializeField] private TMP_Text slugText;
+    [SerializeField] private TMP_Text descriptionText;
+    [SerializeField] private TMP_Text usesText;
 
     [HideInInspector] public bool open = false;
     bool infoSet = false;
@@ -216,10 +217,11 @@ public class Inventory : MonoBehaviour, IPunObservable
     {
         if (stream.isWriting)
         {
-            stream.SendNext(items);
+            byte[] itemBytes = items.First().Serialize();
+            stream.SendNext(itemBytes);
         } else
         {
-            items = (List<Item>)stream.ReceiveNext();
+            Debug.Log(((Item)Item.Deserialize((byte[])stream.ReceiveNext())).Name);
         }
     }
 }
