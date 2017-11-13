@@ -16,7 +16,7 @@ public class Chat : MonoBehaviour, IChatUI
     [SerializeField] private GameObject chatMessagePrefab;
     [SerializeField] private Transform content;
 
-    public TMP_InputField chatInputField;
+    [SerializeField] private TMP_InputField chatInputField;
     [HideInInspector] public bool open = false;
 
     ChatChannel selectedChannel;
@@ -133,6 +133,11 @@ public class Chat : MonoBehaviour, IChatUI
         if (chatInputField.isFocused) return;
         chat.SetActive(false);
         open = false;
+    }
+
+    public bool IsChatInputFocused()
+    {
+        return chatInputField.isFocused;
     }
 
     void ClearChat()

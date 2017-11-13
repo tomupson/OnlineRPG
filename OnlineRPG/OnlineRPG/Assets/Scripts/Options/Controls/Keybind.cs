@@ -20,7 +20,7 @@ public class Keybind : MonoBehaviour
     {
         List<KeyCode> bannedKeys = inputMan.GetBannedKeys();
         keyCodes.RemoveAll(x => bannedKeys.Contains(x));
-        EventHandler.OnKeybindsReset += CheckForChange;
+        EventHandler.OnKeybindsChanged += CheckForChange;
     }
 
     void Update()
@@ -32,7 +32,6 @@ public class Keybind : MonoBehaviour
                 if (Input.GetKeyDown(k))
                 {
                     isEditing = false;
-                    //KeyCode newKey = (KeyCode)Enum.Parse(typeof(KeyCode), Input.inputString.ToUpper());
                     inputMan.SetKey(keybindDictionaryKey, k);
                     currentValue = k;
                     keyText.text = k.ToString();
@@ -58,7 +57,7 @@ public class Keybind : MonoBehaviour
 
     void CheckForChange()
     {
-        KeybindInfo keybindInfo = InputManager.singleton.GetKey(keybindDictionaryKey);
+        KeybindInfo keybindInfo = inputMan.GetKey(keybindDictionaryKey);
         if (keybindInfo.Key != currentValue)
         {
             currentValue = keybindInfo.Key;

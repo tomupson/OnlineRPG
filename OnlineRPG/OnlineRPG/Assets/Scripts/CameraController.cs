@@ -30,7 +30,7 @@ public class CameraController : MonoBehaviour
             currentZoom = Mathf.Clamp(currentZoom, minZoom, maxZoom);
         }
 
-        if (!Chat.singleton.chatInputField.isFocused)
+        if (!Chat.singleton.IsChatInputFocused())
         {
             currentYaw -= Input.GetAxis("Horizontal") * yawSpeed * Time.deltaTime;
         }

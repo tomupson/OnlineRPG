@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [System.Serializable]
-public class KeybindInfo
+public class KeybindInfo : IOptionsInfo
 {
     public string Name { get; set; }
     public KeyCode Key { get; set; }

@@ -6,11 +6,11 @@ public class GameMaster : MonoBehaviour
 
     private InputManager inputMan;
 
-	void Start()
-	{
+    void Start()
+    {
         inputMan = InputManager.singleton;
         Cursor.SetCursor(defaultCursor, Vector2.zero, CursorMode.ForceSoftware);
-	}
+    }
 
     void Update()
     {

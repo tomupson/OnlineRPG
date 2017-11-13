@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 public class InputManager : MonoBehaviour
 {
@@ -11,10 +10,10 @@ public class InputManager : MonoBehaviour
     public static InputManager singleton;
     #endregion
 
-    Dictionary<string, KeybindInfo> keys;
-    List<KeyCode> bannedKeybindKeys;
+    Dictionary<string, IOptionsInfo> keys;
+    private Dictionary<string, IOptionsInfo> defaultKeybinds;
 
-    private Dictionary<string, KeyCode> defaultKeybinds;
+    List<KeyCode> bannedKeybindKeys;
 
     void Awake()
     {
@@ -26,18 +25,15 @@ public class InputManager : MonoBehaviour
 
         singleton = this;
 
-        CreateFileDirectories();
+        CheckFileDirectories();
         InitializeBannedKeys();
         SetDefaultKeys();
         LoadKeybinds();
     }
 
-    void CreateFileDirectories()
+    void CheckFileDirectories()
     {
-        if (!Directory.Exists(Application.persistentDataPath + "/settings"))
-        {
-            Directory.CreateDirectory(Application.persistentDataPath + "/settings");
-        }
+        DirectoryHelper.singleton.CheckDirectories();
 
         if (!File.Exists(Application.persistentDataPath + "/settings/controls.txt"))
         {
@@ -49,21 +45,22 @@ public class InputManager : MonoBehaviour
     void SetDefaultKeys()
     {
         // Set Default Keys in case keybinds file is changed to illegal keys or corrupted by the user.
-        defaultKeybinds = new Dictionary<string, KeyCode>();
+        defaultKeybinds = new Dictionary<string, IOptionsInfo>();
 
-        defaultKeybinds["OPEN_INVENTORY"] = KeyCode.I;
-        defaultKeybinds["OPEN_SKILLS"] = KeyCode.L;
-        defaultKeybinds["OPEN_QUESTS"] = KeyCode.Q;
-        defaultKeybinds["OPEN_CHAT"] = KeyCode.T;
-        defaultKeybinds["OPEN_PAUSE_MENU"] = KeyCode.Escape;
-        defaultKeybinds["TAKE_SCREENSHOT"] = KeyCode.F12;
+        defaultKeybinds["OPEN_INVENTORY"] = new KeybindInfo("", KeyCode.I);
+        defaultKeybinds["OPEN_SKILLS"] = new KeybindInfo("", KeyCode.L);
+        defaultKeybinds["OPEN_QUESTS"] = new KeybindInfo("", KeyCode.Q);
+        defaultKeybinds["OPEN_CHAT"] = new KeybindInfo("", KeyCode.T);
+        defaultKeybinds["OPEN_PAUSE_MENU"] = new KeybindInfo("", KeyCode.Escape);
+        defaultKeybinds["TAKE_SCREENSHOT"] = new KeybindInfo("", KeyCode.F12);
     }
 
     // Loads the KeyCodes in from the file.
     void LoadKeybinds()
     {
         // By default everything is KeyCode.None.
-        keys = new Dictionary<string, KeybindInfo>();
+        keys = new Dictionary<string, IOptionsInfo>();
+
         keys["OPEN_INVENTORY"] = new KeybindInfo("Inventory", KeyCode.None);
         keys["OPEN_SKILLS"] = new KeybindInfo("Skills", KeyCode.None);
         keys["OPEN_QUESTS"] = new KeybindInfo("Quest Book", KeyCode.None);
@@ -71,67 +68,9 @@ public class InputManager : MonoBehaviour
         keys["OPEN_PAUSE_MENU"] = new KeybindInfo("Pause Menu", KeyCode.None);
         keys["TAKE_SCREENSHOT"] = new KeybindInfo("Screenshot", KeyCode.None);
 
-        // Recreate file directories if they are deleted. As "CreateFileDirectories" is called before anyway, this will most likely never run.
-        if (!Directory.Exists(Application.persistentDataPath + "/settings") ||
-            !File.Exists(Application.persistentDataPath + "/settings/controls.txt")) CreateFileDirectories();
+        CheckFileDirectories();
 
-        string line;
-
-        // Regex for matching "x=y", where x (SHOULD) be the input type and y (SHOULD) be the KeyCode.
-        Regex rgx = new Regex(@"^\w+=[\w\d]+$");
-
-        // Read the file
-        StreamReader file = new StreamReader(Application.persistentDataPath + "/settings/controls.txt");
-
-        // Keeps track of whether keys were missing from the file or the keybinds were there but the keycodes were invalid or banned.
-        bool fileHasErrors = false;
-        while ((line = file.ReadLine()) != null)
-        {
-            // If the line matches the regex.
-            if (rgx.IsMatch(line))
-            {
-                string[] parts = line.Split('=');
-                if (keys.ContainsKey(parts[0]))
-                {
-                    KeyCode keyCode = KeyCode.None;
-                    Enum.TryParse(parts[1], out keyCode);
-                    // If the keycode succeeded in parsing and it's not a banned keycode.
-                    if (keyCode != default(KeyCode) && !bannedKeybindKeys.Contains(keyCode))
-                    {
-                        // Assign it.
-                        keys[parts[0]].Key = keyCode;
-                    } else if (defaultKeybinds.ContainsKey(parts[0]))
-                    {
-                        // Otherwise, ensure the default keybinds has that input type and assign the default.
-                        keys[parts[0]].Key = defaultKeybinds[parts[0]];
-                        // This means there was an invalid or banned KeyCode, so errors were found.
-                        fileHasErrors = true;
-                    }
-                }
-            }
-        }
-
-        file.Close();
-
-        // Go through each keybind we've registered before opening the file.
-        foreach (KeyValuePair<string, KeybindInfo> keybind in keys)
-        {
-            // If the key STILL hasn't been assigned
-            if (keybind.Value.Key == KeyCode.None)
-            {
-                // Set it to the default keybind.
-                keybind.Value.Key = defaultKeybinds[keybind.Key];
-
-                // This also means we need a rewrite.
-                fileHasErrors = true;
-            }
-        }
-
-        if (fileHasErrors)
-        {
-            // If errors were found, write back to the file.
-            WriteToFile();
-        }
+        OptionsHelper.LoadFromSettings(keys, defaultKeybinds, Application.persistentDataPath + "/settings/controls.txt");
     }
 
     void InitializeBannedKeys()
@@ -144,19 +83,13 @@ public class InputManager : MonoBehaviour
 
     public void ResetKeybinds()
     {
-        foreach (KeyValuePair<string, KeybindInfo> keybind in keys)
-        {
-            if (defaultKeybinds.ContainsKey(keybind.Key))
-            {
-                keybind.Value.Key = defaultKeybinds[keybind.Key];
-            }
-        }
+        OptionsHelper.ResetSettings(keys, defaultKeybinds);
 
         WriteToFile();
 
-        if (EventHandler.OnKeybindsReset != null)
+        if (EventHandler.OnKeybindsChanged != null)
         {
-            EventHandler.OnKeybindsReset.Invoke();
+            EventHandler.OnKeybindsChanged.Invoke();
         }
     }
 
@@ -169,7 +102,7 @@ public class InputManager : MonoBehaviour
     {
         if (keys.ContainsKey(keyName))
         {
-            return keys[keyName];
+            return (KeybindInfo)keys[keyName];
         }
 
         return new KeybindInfo("", KeyCode.None);
@@ -193,25 +126,15 @@ public class InputManager : MonoBehaviour
         return string.Join(" ", words);
     }
 
-    public void SetKey(string keyName, KeyCode newKey)
+    public void SetKey(string keyName, object value)
     {
-        if (keys.ContainsKey(keyName))
-        {
-            keys[keyName].Key = newKey;
-            Debug.Log($"Successfully updated key binding for {keyName} to {newKey.ToString()}");
-        }
+        OptionsHelper.SetSetting(keys, keyName, value);
     }
 
     public void WriteToFile()
     {
-        if (!File.Exists(Application.persistentDataPath + "/settings/controls.txt")) CreateFileDirectories();
+        if (!File.Exists(Application.persistentDataPath + "/settings/controls.txt")) CheckFileDirectories();
 
-        using (StreamWriter file = new StreamWriter(Application.persistentDataPath + "/settings/controls.txt"))
-        {
-            foreach (KeyValuePair<string, KeybindInfo> keyBind in keys)
-            {
-                file.WriteLine($"{keyBind.Key}={keyBind.Value.Key.ToString()}");
-            }
-        }
+        OptionsHelper.WriteToFile(keys, Application.persistentDataPath + "/settings/controls.txt");
     }
 }

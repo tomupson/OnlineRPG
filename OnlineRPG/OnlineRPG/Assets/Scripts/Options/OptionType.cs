@@ -3,10 +3,12 @@
 public class OptionType : MonoBehaviour
 {
     [SerializeField] private GameObject myPanel;
+    [SerializeField] private bool isDefault = false;
 
     void Start()
     {
-        Hide();
+        if (!isDefault)
+            Hide();
     }
 
     public void Show()
