@@ -70,7 +70,7 @@ public class InputManager : MonoBehaviour
 
         CheckFileDirectories();
 
-        OptionsHelper.LoadFromSettings(keys, defaultKeybinds, Application.persistentDataPath + "/settings/controls.txt");
+        OptionsHandler.LoadFromSettings(keys, defaultKeybinds, Application.persistentDataPath + "/settings/controls.txt");
     }
 
     void InitializeBannedKeys()
@@ -83,7 +83,7 @@ public class InputManager : MonoBehaviour
 
     public void ResetKeybinds()
     {
-        OptionsHelper.ResetSettings(keys, defaultKeybinds);
+        OptionsHandler.ResetSettings(keys, defaultKeybinds);
 
         WriteToFile();
 
@@ -128,13 +128,13 @@ public class InputManager : MonoBehaviour
 
     public void SetKey(string keyName, object value)
     {
-        OptionsHelper.SetSetting(keys, keyName, value);
+        OptionsHandler.SetSetting(keys, keyName, value);
     }
 
     public void WriteToFile()
     {
         if (!File.Exists(Application.persistentDataPath + "/settings/controls.txt")) CheckFileDirectories();
 
-        OptionsHelper.WriteToFile(keys, Application.persistentDataPath + "/settings/controls.txt");
+        OptionsHandler.WriteToFile(keys, Application.persistentDataPath + "/settings/controls.txt");
     }
 }

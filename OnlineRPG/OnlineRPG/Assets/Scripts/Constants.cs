@@ -6,6 +6,7 @@
 
     #region Chat
     public static int MAX_CHAT_MESSAGE_LENGTH = 50;
+    public static int MAX_BACKLOG_MESSAGES = 35;
     #endregion
 
     #region Photon

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class GeneralOptionsManager : MonoBehaviour
 {
@@ -15,5 +16,15 @@ public class GeneralOptionsManager : MonoBehaviour
         }
 
         singleton = this;
+    }
+
+    public void ApplySettings()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void ResetSettings()
+    {
+        throw new NotImplementedException();
     }
 }

@@ -7,6 +7,7 @@ public class PauseMenu : MonoBehaviour
     #endregion
 
     [SerializeField] private GameObject pauseMenu;
+    [SerializeField] private GameObject optionsMenu; 
 
     [HideInInspector] public bool open;
 
@@ -47,7 +48,13 @@ public class PauseMenu : MonoBehaviour
 
     public void Options()
     {
+        optionsMenu.SetActive(true);
+    }
 
+    public void CloseOptions()
+    {
+        // Chck for unapplied changes.
+        optionsMenu.SetActive(false);
     }
 
     public void LeaveRoom()

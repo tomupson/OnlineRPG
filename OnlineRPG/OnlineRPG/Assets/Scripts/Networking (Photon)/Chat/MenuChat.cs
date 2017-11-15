@@ -3,28 +3,38 @@ using System;
 using System.Linq;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using ExitGames.Client.Photon.Chat;
 
-public class MenuChat : MonoBehaviour, IChatUI
+public class MenuChat : MonoBehaviour
 {
     [SerializeField] private TMP_Text loadingChatText;
     [SerializeField] private TMP_Text chatStatusText;
+    [SerializeField] private TMP_Text roomNameText;
     [SerializeField] private TMP_InputField chatInputField;
 
     [SerializeField] private GameObject messagePrefab;
-    [SerializeField] private Transform content;
+    [SerializeField] private GameObject contentPrefab;
+    [SerializeField] private Transform viewport;
+
+    private List<ChannelUI> channels;
 
     void Start()
     {
         loadingChatText.gameObject.SetActive(true);
         EventHandler.OnChatMessagesReceived += ShowNewMessages;
         EventHandler.OnChatStateChanged += ChatStateChanged;
+        EventHandler.OnChatChannelSubscribed += CreateNewChannel;
+        EventHandler.OnChatChannelUnsubscribed += RemoveChannel;
         StartCoroutine(WaitForChatInitialization());
     }
 
     void ChatStateChanged(ChatState state)
     {
-        chatStatusText.text = state.ToString();
+        if (chatStatusText != null)
+        {
+            chatStatusText.text = state.ToString();
+        }
     }
 
     IEnumerator WaitForChatInitialization()
@@ -35,21 +45,22 @@ public class MenuChat : MonoBehaviour, IChatUI
 
     public void ShowNewMessages(string channelName, string[] senders, object[] messages)
     {
-        if (channelName == "global")
+        for (int i = 0; i < senders.Length; i++)
         {
-            for (int i = 0; i < senders.Length; i++)
+            ChatChannel channel = ChatHandler.singleton.GetChannelByName(channelName);
+            ChannelUI channelUI = channels.Where(x => x.chatChannel == channel).FirstOrDefault();
+            if (channelUI == null)
             {
-                GameObject chatMessageGO = Instantiate(messagePrefab, content, false);
-                ChatMessage chatMessage = chatMessageGO.GetComponent<ChatMessage>();
-                Debug.Log($"Sender ID: {senders[i]}");
-                foreach (PhotonPlayer player in PhotonNetwork.playerList)
-                {
-                    Debug.Log($"Player {player.NickName}, ID = {player.UserId}");
-                }
-
-                string message = $"({DateTime.Now.ToLongTimeString()}) [{PhotonNetwork.playerList.ToList().Where(x => x.UserId == senders[i]).FirstOrDefault().NickName}]: {messages[i]}";
-                chatMessage.SetupMessage(message);
+                GameObject newContent = Instantiate(contentPrefab, viewport, false);
+                channelUI = newContent.GetComponent<ChannelUI>();
+                channelUI.Setup(channel);
             }
+
+            GameObject chatMessageGO = Instantiate(messagePrefab, channelUI.transform, false);
+            ChatMessage chatMessage = chatMessageGO.GetComponent<ChatMessage>();
+
+            string message = $"({DateTime.Now.ToLongTimeString()}) [{PhotonNetwork.playerList.ToList().Where(x => x.UserId == senders[i]).FirstOrDefault().NickName}]: {messages[i]}";
+            chatMessage.SetupMessage(message);
         }
     }
 
@@ -63,5 +74,18 @@ public class MenuChat : MonoBehaviour, IChatUI
 
         chatInputField.Clear();
         chatInputField.DeactivateInputField();
+    }
+
+    void CreateNewChannel(ChatChannel channel)
+    {
+        GameObject newContent = Instantiate(contentPrefab, viewport, false);
+        ChannelUI channelUI = newContent.GetComponent<ChannelUI>();
+        channelUI.Setup(channel);
+    }
+
+    void RemoveChannel(ChatChannel channel)
+    {
+        ChannelUI channelUI = channels.Where(x => x.chatChannel == channel).FirstOrDefault();
+        Destroy(channelUI.gameObject);
     }
 }

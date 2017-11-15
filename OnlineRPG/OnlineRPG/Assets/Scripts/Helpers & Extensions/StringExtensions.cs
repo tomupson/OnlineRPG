@@ -4,6 +4,6 @@
     {
         char[] chars = s.ToCharArray();
         chars[0] = char.ToUpper(chars[0]);
-        return chars.ToString();
+        return new string(chars);
     }
 }

@@ -8,9 +8,9 @@ public static class ItemHelper
 
         foreach (var assembly in assemblies)
         {
-            var assembly_types = assembly.GetTypes();
+            var assemblyTypes = assembly.GetTypes();
 
-            foreach (Type type in assembly_types)
+            foreach (Type type in assemblyTypes)
             {
                 if (type.IsDefined(typeof(ItemCategoryAttribute), acceptInheritance))
                 {

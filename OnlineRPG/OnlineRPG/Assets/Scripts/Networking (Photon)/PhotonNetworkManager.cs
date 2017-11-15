@@ -2,11 +2,14 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using ExitGames.Client.Photon.Chat;
+using System.Text.RegularExpressions;
 
 public class PhotonNetworkManager : Photon.MonoBehaviour
 {
     [SerializeField] private TMP_Text connectionStatusText;
     [SerializeField] private GameObject player;
+
+    ClientState oldClientState;
 
     void Awake()
     {
@@ -24,10 +27,15 @@ public class PhotonNetworkManager : Photon.MonoBehaviour
 
     void Update()
     {
-        if (connectionStatusText != null)
+        ClientState newState = PhotonNetwork.connectionStateDetailed;
+
+        if (connectionStatusText != null && oldClientState != newState)
         {
-            connectionStatusText.text = PhotonNetwork.connectionStateDetailed.ToString();
+            string[] split = Regex.Split(PhotonNetwork.connectionStateDetailed.ToString(), @"(?<!^)(?=[A-Z])");
+            connectionStatusText.text = string.Join(" ", split);
         }
+
+        oldClientState = PhotonNetwork.connectionStateDetailed;
     }
 
     public void Connect()

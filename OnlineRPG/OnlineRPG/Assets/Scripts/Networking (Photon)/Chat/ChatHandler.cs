@@ -41,7 +41,9 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
     void LoadFriendsList()
     {
         string friendsString = PlayerPrefs.GetString("FriendList");
+
         if (friendsString.Length <= 0) return;
+
         string[] friends = friendsString.Split(';');
 
         foreach (string friend in friends)
@@ -50,7 +52,7 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
             {
                 Name = friend,
                 Status = 0,
-                StatusMessage = ""
+                StatusMessage = string.Empty
             });
         }
     }
@@ -201,7 +203,7 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
         {
             Name = friendName,
             Status = 0,
-            StatusMessage = ""
+            StatusMessage = string.Empty
         };
 
         friendsList.Add(newFriend);
@@ -241,18 +243,46 @@ public class ChatHandler : MonoBehaviour, IChatClientListener
     {
         for (int i = 0; i < channels.Length; i++)
         {
-            if (results[i])
+            ChatChannel channel = GetChannelByName(channels[i]);
+            if (results[i] && !channelsAndMessages.ContainsKey(channel))
             {
                 //Debug.Log($"Successfully subscribed to {channels[i]}");
-                channelsAndMessages.Add(GetChannelByName(channels[i]), new List<ChatSenderMessage>());
+                channelsAndMessages.Add(channel, new List<ChatSenderMessage>());
+                if (EventHandler.OnChatChannelSubscribed != null)
+                {
+                    EventHandler.OnChatChannelSubscribed.Invoke(channel);
+                }
             }
             //else Debug.LogWarning($"Failed to subscribe to {channels[i]}");
         }
+
+        ChatMessage[] messagesToRemove;
+        while (channelsAndMessages.Count > Constants.MAX_BACKLOG_MESSAGES)
+        {
+
+        }
+
+
     }
 
     public void OnUnsubscribed(string[] channels)
     {
         Debug.Log("On Unsubscribed");
+
+        foreach (KeyValuePair<ChatChannel, List<ChatSenderMessage>> channel in channelsAndMessages)
+        {
+            ChatChannel chatChannel = GetChannelByName(channel.Key.Name);
+            if (chatChannel == null)
+            {
+                ChatChannel channelToRemove = channelsAndMessages.Where(x => x.Key.Name == channel.Key.Name).FirstOrDefault().Key;
+                channelsAndMessages.Remove(channelToRemove);
+
+                if (EventHandler.OnChatChannelUnsubscribed != null)
+                {
+                    EventHandler.OnChatChannelUnsubscribed.Invoke(channelToRemove);
+                }
+            }
+        }
     }
 
     public void OnStatusUpdate(string user, int status, bool gotMessage, object message)

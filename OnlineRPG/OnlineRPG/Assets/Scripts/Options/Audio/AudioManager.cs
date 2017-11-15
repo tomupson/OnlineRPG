@@ -39,7 +39,7 @@ public class AudioManager : MonoBehaviour
 
     public void SetSetting(string setting, object value)
     {
-        OptionsHelper.SetSetting(audioSettings, setting, value);
+        OptionsHandler.SetSetting(audioSettings, setting, value);
     }
 
     public List<string> GetAllAudioSettings()
@@ -72,7 +72,7 @@ public class AudioManager : MonoBehaviour
 
         CheckFileDirectories();
 
-        OptionsHelper.LoadFromSettings(audioSettings, defaultAudioSettings, Application.persistentDataPath + "/settings/audio.txt");
+        OptionsHandler.LoadFromSettings(audioSettings, defaultAudioSettings, Application.persistentDataPath + "/settings/audio.txt");
 
         ApplySettings();
     }
@@ -86,7 +86,7 @@ public class AudioManager : MonoBehaviour
 
     public void ResetAudioSettings()
     {
-        OptionsHelper.ResetSettings(audioSettings, defaultAudioSettings);
+        OptionsHandler.ResetSettings(audioSettings, defaultAudioSettings);
 
         ApplySettings();
 
@@ -97,6 +97,6 @@ public class AudioManager : MonoBehaviour
     {
         if (!File.Exists(Application.persistentDataPath + "/settings/audio.txt")) CheckFileDirectories();
 
-        OptionsHelper.WriteToFile(audioSettings, Application.persistentDataPath + "/settings/audio.txt");
+        OptionsHandler.WriteToFile(audioSettings, Application.persistentDataPath + "/settings/audio.txt");
     }
 }

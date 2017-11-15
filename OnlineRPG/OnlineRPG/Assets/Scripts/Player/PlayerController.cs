@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Player))]
 public class PlayerController : MonoBehaviour
@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
     public LayerMask movementMask;
 
     Camera playerCam;
-    [SerializeField] private GameObject mouseInteractInfoPanel;
 
     Player player;
     Vector3 pointToMove;

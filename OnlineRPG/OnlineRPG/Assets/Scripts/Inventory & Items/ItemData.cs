@@ -20,7 +20,7 @@ public class ItemData : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             TMP_Text txt = GetComponentInChildren<TMP_Text>();
             if (value <= 1)
             {
-                txt.text = "";
+                txt.text = string.Empty;
             } else
             {
                 txt.text = value.ToString();

@@ -1,4 +1,6 @@
 ﻿using ExitGames.Client.Photon.Chat;
+using UnityEngine;
+
 public static class ChatHelper
 {
     public static string GetHumanReadableStatus(int status)
@@ -21,5 +23,23 @@ public static class ChatHelper
             case ChatUserStatus.Playing:
                 return "Playing";
         }
+    }
+
+    public static string GetHumanReadableChannelName(string channelName)
+    {
+        if (PhotonNetwork.room != null)
+        {
+            if (channelName == "room " + PhotonNetwork.room.Name.GetHashCode())
+                return "Room";
+        }
+
+        string[] words = channelName.Split(' ');
+
+        for (int i = 0; i < words.Length; i++)
+        {
+            words[i] = words[i].ToUpperFirstChar();
+        }
+
+        return string.Join(" ", words);
     }
 }

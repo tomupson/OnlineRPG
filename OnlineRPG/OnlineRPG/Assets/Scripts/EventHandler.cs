@@ -10,6 +10,7 @@ public class EventHandler : MonoBehaviour
     public delegate void OnPlayerJoinedRoomDelegate(PhotonPlayer player);
     public delegate void OnChatClientConnectedDelegate();
     public delegate void OnChatMessagesReceivedDelegate(string channelName, string[] senders, object[] messages);
+    public delegate void OnChatMessageRemovedDelegate(ChatMessage[] messagesToRemove);
     public delegate void OnChatFriendAddedDelegate(ChatFriend friendAdded);
     public delegate void OnChatFriendRemovedDelegate(ChatFriend friendRemoved);
     public delegate void OnChatStateChangedDelegate(ChatState state);
@@ -18,6 +19,8 @@ public class EventHandler : MonoBehaviour
     public delegate void OnGraphicsSettingsChangedDelegate();
     public delegate void OnAudioSettingsChangedDelegate();
     public delegate void OnGameSettingsChangedDelegate();
+    public delegate void OnChatChannelSubscribedDelegate(ChatChannel channel);
+    public delegate void OnChatChannelUnsubscribedDelegate(ChatChannel channel);
     #endregion
 
     #region Enemy
@@ -33,13 +36,16 @@ public class EventHandler : MonoBehaviour
     public static OnPlayerJoinedRoomDelegate OnPlayerJoinedRoom;
     #endregion
 
-    #region PhotonChat
+    #region Photon Chat
     public static OnChatClientConnectedDelegate OnChatClientConnected;
     public static OnChatMessagesReceivedDelegate OnChatMessagesReceived;
+    public static OnChatMessageRemovedDelegate OnChatMessagesRemoved;
     public static OnChatFriendAddedDelegate OnChatFriendAdded;
     public static OnChatFriendRemovedDelegate OnChatFriendRemoved;
     public static OnChatStateChangedDelegate OnChatStateChanged;
     public static OnChatUserStatusUpdatedDelegate OnChatUserStatusUpdated;
+    public static OnChatChannelSubscribedDelegate OnChatChannelSubscribed;
+    public static OnChatChannelUnsubscribedDelegate OnChatChannelUnsubscribed;
     #endregion
 
     #region Options

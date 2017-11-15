@@ -36,15 +36,24 @@ public class GraphicsManager : MonoBehaviour
         settingDropdownOptions.Add("RESOLUTION", OptionsHelper.GetFormattedResolutions());
         settingDropdownOptions.Add("ANTI_ALIASING", new List<string>()
         {
-            "None",
-            "Medium",
-            "High"
+            "Off",
+            "2x MSAA",
+            "4x MSAA",
+            "8x MSAA"
         });
         settingDropdownOptions.Add("TEXTURE_QUALITY", new List<string>()
         {
             "Low",
             "Medium",
             "High"
+        });
+        settingDropdownOptions.Add("SHADOWS", new List<string>()
+        {
+            "Off",
+            "Low",
+            "Medium",
+            "High",
+            "Ultra"
         });
     }
 
@@ -70,20 +79,7 @@ public class GraphicsManager : MonoBehaviour
 
     public void SetSetting(string setting, object value)
     {
-        if (graphicsSettings.ContainsKey(setting))
-        {
-            IOptionsInfo info = graphicsSettings[setting];
-            if (info is ToggleInfo)
-            {
-                ((ToggleInfo)info).IsChecked = (bool)value;
-            } else if (info is DropdownInfo)
-            {
-                ((DropdownInfo)info).Index = (int)value;
-            } else if (info is SliderInfo)
-            {
-                ((SliderInfo)info).Value = (float)value;
-            }
-        }
+        OptionsHandler.SetSetting(graphicsSettings, setting, value);
     }
 
     public List<string> GetAllGraphicsSettings()
@@ -105,11 +101,12 @@ public class GraphicsManager : MonoBehaviour
     {
         defaultGraphicsSettings = new Dictionary<string, IOptionsInfo>();
 
-        defaultGraphicsSettings["FULLSCREEN"] = new ToggleInfo("Fullscreen", true);
-        defaultGraphicsSettings["VSYNC"] = new ToggleInfo("VSync", true);
-        defaultGraphicsSettings["RESOLUTION"] = new DropdownInfo("Resolution", OptionsHelper.GetIndexOfCurrentResolution());
-        defaultGraphicsSettings["ANTI_ALIASING"] = new DropdownInfo("Anti Aliasing", 2);
-        defaultGraphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo("Texture Quality", 2);
+        defaultGraphicsSettings["FULLSCREEN"] = new ToggleInfo("", true);
+        defaultGraphicsSettings["VSYNC"] = new ToggleInfo("", true);
+        defaultGraphicsSettings["RESOLUTION"] = new DropdownInfo("", OptionsHelper.GetIndexOfCurrentResolution());
+        defaultGraphicsSettings["ANTI_ALIASING"] = new DropdownInfo("", 2);
+        defaultGraphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo("", 2);
+        defaultGraphicsSettings["SHADOWS"] = new DropdownInfo("", 4);
     }
 
     void LoadGraphicsSettings()
@@ -121,29 +118,39 @@ public class GraphicsManager : MonoBehaviour
         graphicsSettings["RESOLUTION"] = new DropdownInfo("Resolution", null);
         graphicsSettings["ANTI_ALIASING"] = new DropdownInfo("Anti Aliasing", null);
         graphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo("Texture Quality", null);
+        graphicsSettings["SHADOWS"] = new DropdownInfo("Shadows", null);
 
         CheckFileDirectories();
 
-        OptionsHelper.LoadFromSettings(graphicsSettings, defaultGraphicsSettings, Application.persistentDataPath + "/settings/graphics.txt");
+        OptionsHandler.LoadFromSettings(graphicsSettings, defaultGraphicsSettings, Application.persistentDataPath + "/settings/graphics.txt");
 
         ApplySettings();
     }
 
     public void ApplySettings()
     {
-        // 2 is 60fps on 60Hz, 144fps on 144Hz e.t.c. 0 is none. 1 is half refresh rate, which I'm not using.
-        QualitySettings.vSyncCount = (bool)((ToggleInfo)graphicsSettings["VSYNC"]).IsChecked ? 2 : 0;
+        QualitySettings.vSyncCount = (bool)((ToggleInfo)graphicsSettings["VSYNC"]).IsChecked ? 1 : 0;
         Resolution newRes = OptionsHelper.GetResolutionFromIndex((int)((DropdownInfo)graphicsSettings["RESOLUTION"]).Index);
         Screen.SetResolution(newRes.width, newRes.height, (bool)((ToggleInfo)graphicsSettings["FULLSCREEN"]).IsChecked, newRes.refreshRate);
         QualitySettings.antiAliasing = (int)((DropdownInfo)graphicsSettings["ANTI_ALIASING"]).Index;
-        // **Texture Quality thing here.**
+
+        QualitySettings.masterTextureLimit = (settingDropdownOptions["TEXTURE_QUALITY"].Count - 1) - (int)((DropdownInfo)graphicsSettings["TEXTURE_QUALITY"]).Index;
+
+        int shadowDropdownIndex = (int)((DropdownInfo)graphicsSettings["SHADOWS"]).Index;
+
+        if (shadowDropdownIndex == 0) QualitySettings.shadows = ShadowQuality.Disable;
+        else if (shadowDropdownIndex >= settingDropdownOptions["SHADOWS"].Count - 2) QualitySettings.shadows = ShadowQuality.All;
+        else QualitySettings.shadows = ShadowQuality.HardOnly;
+
+        QualitySettings.shadowResolution = (ShadowResolution)shadowDropdownIndex + 1;
+        QualitySettings.shadowDistance = shadowDropdownIndex != 0 ? 40 * shadowDropdownIndex : 0;
 
         WriteToFile();
     }
 
     public void ResetGraphicsSettings()
     {
-        OptionsHelper.ResetSettings(graphicsSettings, defaultGraphicsSettings);
+        OptionsHandler.ResetSettings(graphicsSettings, defaultGraphicsSettings);
 
         ApplySettings();
 
@@ -159,6 +166,6 @@ public class GraphicsManager : MonoBehaviour
     {
         if (!File.Exists(Application.persistentDataPath + "/settings/graphics.txt")) CheckFileDirectories();
 
-        OptionsHelper.WriteToFile(graphicsSettings, Application.persistentDataPath + "/settings/graphics.txt");
+        OptionsHandler.WriteToFile(graphicsSettings, Application.persistentDataPath + "/settings/graphics.txt");
     }
 }

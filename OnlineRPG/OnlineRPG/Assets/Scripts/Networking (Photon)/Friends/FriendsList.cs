@@ -56,12 +56,7 @@ public class FriendsList : MonoBehaviour
         Friend friendFound = friendList.Where(x => x.friend.Name == user).FirstOrDefault();
         if (friendFound != null)
         {
-            friendFound.friend.Status = status;
-            Debug.Log(friendFound);
-            Debug.Log(friendFound.friend);
-            Debug.Log(gotMessage);
-            Debug.Log(message.ToString());
-            friendFound.friend.StatusMessage = gotMessage ? message.ToString() : "";
+            friendFound.UpdateStatus(status, gotMessage, message);
         }
     }
 
