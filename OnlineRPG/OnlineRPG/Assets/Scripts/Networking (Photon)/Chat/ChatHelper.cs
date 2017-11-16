@@ -1,5 +1,4 @@
 ﻿using ExitGames.Client.Photon.Chat;
-using UnityEngine;
 
 public static class ChatHelper
 {

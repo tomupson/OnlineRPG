@@ -3,7 +3,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using ExitGames.Client.Photon.Chat;
 
 public class NetworkLobby : MonoBehaviour
 {
@@ -85,14 +84,17 @@ public class NetworkLobby : MonoBehaviour
             PhotonNetwork.JoinRoom(selectedRoom.Name);
         } else
         {
-            Debug.Log("No Room selected!");
+            Debug.Log("No Room selected, creating...");
+
+            RoomOptions roomOptions = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = 20, PublishUserId = true };
+            PhotonNetwork.CreateRoom($"{PhotonNetwork.player.NickName}'s Room", roomOptions, TypedLobby.Default);
         }
     }
 
     public void CreateRoom()
     {
         RoomOptions roomOptions = new RoomOptions() { IsVisible = true, IsOpen = true, MaxPlayers = 20, PublishUserId = true };
-        if (PhotonNetwork.CreateRoom("EU", roomOptions, TypedLobby.Default))
+        if (PhotonNetwork.CreateRoom($"{PhotonNetwork.player.NickName}'s Room", roomOptions, TypedLobby.Default))
         {
             Debug.Log("CreateRoom request sent successfully.");
         } else

@@ -5,12 +5,13 @@ public class OptionsInitializer : MonoBehaviour
     [Header("Graphics")]
     [SerializeField] private GameObject graphicsDropdownPrefab;
     [SerializeField] private GameObject graphicsTogglePrefab;
+    [SerializeField] private GameObject graphicsSliderPrefab;
     [SerializeField] private Transform graphicsContent;
 
     [Space]
 
     [Header("Game")]
-    [SerializeField] private GameObject gamePrefab;
+    [SerializeField] private GameObject gameTogglePrefab;
     [SerializeField] private Transform gameContent;
 
     [Space]
@@ -46,6 +47,20 @@ public class OptionsInitializer : MonoBehaviour
             {
                 GameObject graphicsSettingGO = Instantiate(graphicsDropdownPrefab, graphicsContent, false);
                 graphicsSettingGO.GetComponent<GraphicsSettingDropdown>().Setup(graphicsSetting);
+            } else if (info is SliderInfo)
+            {
+                GameObject graphicsSettingGO = Instantiate(graphicsSliderPrefab, graphicsContent, false);
+                graphicsSettingGO.GetComponent<GraphicsSettingSlider>().Setup(graphicsSetting);
+            }
+        }
+
+        foreach (string gameSetting in generalMan.GetAllGameSettings())
+        {
+            IOptionsInfo info = generalMan.GetSetting(gameSetting);
+            if (info is ToggleInfo)
+            {
+                GameObject gameSettingGO = Instantiate(gameTogglePrefab, gameContent, false);
+                gameSettingGO.GetComponent<GameSettingToggle>().Setup(gameSetting);
             }
         }
 

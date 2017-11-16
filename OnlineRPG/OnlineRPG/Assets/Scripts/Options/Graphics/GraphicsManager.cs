@@ -107,6 +107,12 @@ public class GraphicsManager : MonoBehaviour
         defaultGraphicsSettings["ANTI_ALIASING"] = new DropdownInfo("", 2);
         defaultGraphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo("", 2);
         defaultGraphicsSettings["SHADOWS"] = new DropdownInfo("", 4);
+        defaultGraphicsSettings["MOTION_BLUR"] = new ToggleInfo("", true);
+        defaultGraphicsSettings["MOTION_BLUR_AMOUNT"] = new SliderInfo("", 50, 0, 100);
+        defaultGraphicsSettings["AMBIENT_OCCLUSION"] = new ToggleInfo("", false);
+        defaultGraphicsSettings["BLOOM"] = new ToggleInfo("", false);
+        //defaultGraphicsSettings["BLOOM_AMOUNT"] = new SliderInfo("", 50, 0, 100);
+        //defaultGraphicsSettings["SUN_SHAFTS"] = new ToggleInfo("", true);
     }
 
     void LoadGraphicsSettings()
@@ -119,6 +125,12 @@ public class GraphicsManager : MonoBehaviour
         graphicsSettings["ANTI_ALIASING"] = new DropdownInfo("Anti Aliasing", null);
         graphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo("Texture Quality", null);
         graphicsSettings["SHADOWS"] = new DropdownInfo("Shadows", null);
+        graphicsSettings["MOTION_BLUR"] = new ToggleInfo("Motion Blur", null);
+        graphicsSettings["MOTION_BLUR_AMOUNT"] = new SliderInfo("Motion Blur Amount", null, 0, 100);
+        graphicsSettings["AMBIENT_OCCLUSION"] = new ToggleInfo("Ambient Occlusion", null);
+        graphicsSettings["BLOOM"] = new ToggleInfo("Bloom", null);
+        //graphicsSettings["BLOOM_AMOUNT"] = new SliderInfo("Bloom Amount", null, 0, 100);
+        //graphicsSettings["SUN_SHAFTS"] = new ToggleInfo("Sun Shafts", null);
 
         CheckFileDirectories();
 

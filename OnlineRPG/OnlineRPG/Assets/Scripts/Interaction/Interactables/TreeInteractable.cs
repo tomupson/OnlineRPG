@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Linq;
+﻿using System.Linq;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,13 +17,13 @@ public class TreeInteractable : Interactable, IInteractable
 
     Inventory inventory;
     [HideInInspector] public List<Option> interactOptions { get; set; } // These are specific to the -TREE- interactable.
-    MeshCollider treeCollider;
+    Collider treeCollider;
 
     void Start()
     {
         InitializeOptions();
         inventory = FindObjectOfType<Inventory>();
-        treeCollider = GetComponent<MeshCollider>();
+        treeCollider = GetComponent<Collider>();
     }
 
     new public void InitializeOptions()

@@ -23,7 +23,7 @@ public class GraphicsSettingToggle : MonoBehaviour, IOptionsSetting
         ToggleInfo toggleInfo = graphicsMan.GetSetting(settingName) as ToggleInfo;
         currentValue = (bool)toggleInfo.IsChecked;
         settingNameText.text = toggleInfo.Name;
-        settingToggle.isOn = (bool)toggleInfo.IsChecked;
+        settingToggle.isOn = currentValue;
     }
 
     public void OnCheckboxValueChanged(bool newState)

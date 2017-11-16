@@ -4,7 +4,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class Player : MonoBehaviour
 {
-    public CharacterStats stats;
+    [HideInInspector] public CharacterStats stats;
 
     [SerializeField] private float rotationSpeed = 5f;
 

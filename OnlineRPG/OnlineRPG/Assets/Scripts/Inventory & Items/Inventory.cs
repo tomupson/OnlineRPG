@@ -1,9 +1,9 @@
 ﻿using TMPro;
 using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using System.Linq;
 
 public class Inventory : MonoBehaviour, IPunObservable
 {
