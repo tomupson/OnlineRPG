@@ -61,14 +61,14 @@ public class AudioManager : MonoBehaviour
     {
         defaultAudioSettings = new Dictionary<string, IOptionsInfo>();
 
-        defaultAudioSettings["MASTER_VOLUME"] = new SliderInfo("Master Volume", 100, 0, 100);
+        defaultAudioSettings["MASTER_VOLUME"] = new SliderInfo(string.Empty, string.Empty, 100, 0, 100);
     }
 
     void LoadAudioSettings()
     {
         audioSettings = new Dictionary<string, IOptionsInfo>();
 
-        audioSettings["MASTER_VOLUME"] = new SliderInfo("Master Volume", null, 0, 100);
+        audioSettings["MASTER_VOLUME"] = new SliderInfo("Master Volume", "Overall volume of the game.", null, 0, 100);
 
         CheckFileDirectories();
 

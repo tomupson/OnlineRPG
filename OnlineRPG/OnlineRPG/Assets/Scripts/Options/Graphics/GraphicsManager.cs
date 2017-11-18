@@ -101,34 +101,34 @@ public class GraphicsManager : MonoBehaviour
     {
         defaultGraphicsSettings = new Dictionary<string, IOptionsInfo>();
 
-        defaultGraphicsSettings["FULLSCREEN"] = new ToggleInfo("", true);
-        defaultGraphicsSettings["VSYNC"] = new ToggleInfo("", true);
-        defaultGraphicsSettings["RESOLUTION"] = new DropdownInfo("", OptionsHelper.GetIndexOfCurrentResolution());
-        defaultGraphicsSettings["ANTI_ALIASING"] = new DropdownInfo("", 2);
-        defaultGraphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo("", 2);
-        defaultGraphicsSettings["SHADOWS"] = new DropdownInfo("", 4);
-        defaultGraphicsSettings["MOTION_BLUR"] = new ToggleInfo("", true);
-        defaultGraphicsSettings["MOTION_BLUR_AMOUNT"] = new SliderInfo("", 50, 0, 100);
-        defaultGraphicsSettings["AMBIENT_OCCLUSION"] = new ToggleInfo("", false);
-        defaultGraphicsSettings["BLOOM"] = new ToggleInfo("", false);
-        //defaultGraphicsSettings["BLOOM_AMOUNT"] = new SliderInfo("", 50, 0, 100);
-        //defaultGraphicsSettings["SUN_SHAFTS"] = new ToggleInfo("", true);
+        defaultGraphicsSettings["FULLSCREEN"] = new ToggleInfo(string.Empty, string.Empty, true);
+        defaultGraphicsSettings["VSYNC"] = new ToggleInfo(string.Empty, string.Empty, true);
+        defaultGraphicsSettings["RESOLUTION"] = new DropdownInfo(string.Empty, string.Empty, OptionsHelper.GetIndexOfCurrentResolution());
+        defaultGraphicsSettings["ANTI_ALIASING"] = new DropdownInfo(string.Empty, string.Empty, 2);
+        defaultGraphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo(string.Empty, string.Empty, 2);
+        defaultGraphicsSettings["SHADOWS"] = new DropdownInfo(string.Empty, string.Empty, 4);
+        defaultGraphicsSettings["MOTION_BLUR"] = new ToggleInfo(string.Empty, string.Empty, true);
+        defaultGraphicsSettings["MOTION_BLUR_AMOUNT"] = new SliderInfo(string.Empty, string.Empty, 50, 0, 100);
+        defaultGraphicsSettings["AMBIENT_OCCLUSION"] = new ToggleInfo(string.Empty, string.Empty, false);
+        defaultGraphicsSettings["BLOOM"] = new ToggleInfo(string.Empty, string.Empty, false);
+        //defaultGraphicsSettings["BLOOM_AMOUNT"] = new SliderInfo(string.Empty, string.Empty, 50, 0, 100);
+        //defaultGraphicsSettings["SUN_SHAFTS"] = new ToggleInfo(string.Empty, string.Empty, true);
     }
 
     void LoadGraphicsSettings()
     {
         graphicsSettings = new Dictionary<string, IOptionsInfo>();
 
-        graphicsSettings["FULLSCREEN"] = new ToggleInfo("Fullscreen", null);
-        graphicsSettings["VSYNC"] = new ToggleInfo("VSync", null);
-        graphicsSettings["RESOLUTION"] = new DropdownInfo("Resolution", null);
-        graphicsSettings["ANTI_ALIASING"] = new DropdownInfo("Anti Aliasing", null);
-        graphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo("Texture Quality", null);
-        graphicsSettings["SHADOWS"] = new DropdownInfo("Shadows", null);
-        graphicsSettings["MOTION_BLUR"] = new ToggleInfo("Motion Blur", null);
-        graphicsSettings["MOTION_BLUR_AMOUNT"] = new SliderInfo("Motion Blur Amount", null, 0, 100);
-        graphicsSettings["AMBIENT_OCCLUSION"] = new ToggleInfo("Ambient Occlusion", null);
-        graphicsSettings["BLOOM"] = new ToggleInfo("Bloom", null);
+        graphicsSettings["FULLSCREEN"] = new ToggleInfo("Fullscreen", "Makes the game fullscreen.", null);
+        graphicsSettings["VSYNC"] = new ToggleInfo("VSync", "Limits the FPS to your monitor's refresh rate to prevent screen tear.", null);
+        graphicsSettings["RESOLUTION"] = new DropdownInfo("Resolution", "Adjusts the size of the game on your monitor.", null);
+        graphicsSettings["ANTI_ALIASING"] = new DropdownInfo("Anti Aliasing", "Smooths jagged edges.", null);
+        graphicsSettings["TEXTURE_QUALITY"] = new DropdownInfo("Texture Quality", "Changes the quality of the textures used in the game.", null);
+        graphicsSettings["SHADOWS"] = new DropdownInfo("Shadows", "Changes the quality of the shadows.", null);
+        graphicsSettings["MOTION_BLUR"] = new ToggleInfo("Motion Blur", "Blurs movement in the game.", null);
+        graphicsSettings["MOTION_BLUR_AMOUNT"] = new SliderInfo("Motion Blur Amount", "Adjusts the amount of blur that occurs on motion.", null, 0, 100);
+        graphicsSettings["AMBIENT_OCCLUSION"] = new ToggleInfo("Ambient Occlusion", "Adjusts the lighting on surfaces to replicate how light would penetrate in real life.", null);
+        graphicsSettings["BLOOM"] = new ToggleInfo("Bloom", "Increases the brightness of light in spots where light would spread.", null);
         //graphicsSettings["BLOOM_AMOUNT"] = new SliderInfo("Bloom Amount", null, 0, 100);
         //graphicsSettings["SUN_SHAFTS"] = new ToggleInfo("Sun Shafts", null);
 

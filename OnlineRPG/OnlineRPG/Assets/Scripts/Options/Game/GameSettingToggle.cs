@@ -11,6 +11,8 @@ public class GameSettingToggle : MonoBehaviour, IOptionsSetting
     private string settingDictionaryKey;
     private bool currentValue;
 
+    public IOptionsInfo info { get; set; }
+
     void Start()
     {
         EventHandler.OnGameSettingsChanged += CheckForChange;
@@ -21,6 +23,7 @@ public class GameSettingToggle : MonoBehaviour, IOptionsSetting
         generalMan = GeneralOptionsManager.singleton;
         settingDictionaryKey = settingName;
         ToggleInfo toggleInfo = generalMan.GetSetting(settingName) as ToggleInfo;
+        info = toggleInfo;
         currentValue = (bool)toggleInfo.IsChecked;
         settingNameText.text = toggleInfo.Name;
         settingToggle.isOn = currentValue;

@@ -9,6 +9,7 @@ public class QuestBook : MonoBehaviour
     #endregion
 
     CharacterStats stats;
+    GameMaster gameMaster;
 
     [SerializeField] private GameObject questBook;
     [SerializeField] private GameObject questPrefab;
@@ -45,6 +46,8 @@ public class QuestBook : MonoBehaviour
     void Start()
     {
         stats = Player.LocalPlayer.GetComponent<CharacterStats>();
+        gameMaster = FindObjectOfType<GameMaster>();
+
         stats.OnQuestAdded += CreateQuestFor;
         CloseQuestBook();
         infoSet = false;
@@ -78,6 +81,7 @@ public class QuestBook : MonoBehaviour
     {
         questBook.SetActive(true);
         open = true;
+        gameMaster.QueueEscape(CloseQuestBook);
         HideInfo();
         if (stats.quests.Count == 0)
             noQuestsText.SetActive(true);

@@ -11,6 +11,8 @@ public class GraphicsSettingToggle : MonoBehaviour, IOptionsSetting
     private string settingDictionaryKey;
     private bool currentValue;
 
+    public IOptionsInfo info { get; set; }
+
     void Start()
     {
         EventHandler.OnGraphicsSettingsChanged += CheckForChange;
@@ -21,6 +23,7 @@ public class GraphicsSettingToggle : MonoBehaviour, IOptionsSetting
         graphicsMan = GraphicsManager.singleton;
         settingDictionaryKey = settingName;
         ToggleInfo toggleInfo = graphicsMan.GetSetting(settingName) as ToggleInfo;
+        info = toggleInfo;
         currentValue = (bool)toggleInfo.IsChecked;
         settingNameText.text = toggleInfo.Name;
         settingToggle.isOn = currentValue;

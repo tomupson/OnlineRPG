@@ -10,6 +10,8 @@ public class GraphicsSettingDropdown : MonoBehaviour, IOptionsSetting
     private string settingDictionaryKey;
     private int currentValue;
 
+    public IOptionsInfo info { get; set; }
+
     void Start()
     {
         EventHandler.OnGraphicsSettingsChanged += CheckForChange;
@@ -20,6 +22,7 @@ public class GraphicsSettingDropdown : MonoBehaviour, IOptionsSetting
         graphicsMan = GraphicsManager.singleton;
         settingDictionaryKey = settingName;
         DropdownInfo dropdownInfo = graphicsMan.GetSetting(settingName) as DropdownInfo;
+        info = dropdownInfo;
         currentValue = (int)dropdownInfo.Index;
         settingNameText.text = dropdownInfo.Name;
         settingDropdown.AddOptions(graphicsMan.GetDropdownOptionsFor(settingDictionaryKey));

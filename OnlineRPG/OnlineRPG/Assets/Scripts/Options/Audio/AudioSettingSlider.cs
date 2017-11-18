@@ -8,8 +8,10 @@ public class AudioSettingSlider : MonoBehaviour, IOptionsSetting
     [SerializeField] private Slider settingSlider;
 
     private AudioManager audioMan;
-    private string settingDictionaryKey;
+    private string settingDictionaryKey { get; set; }
     private float currentValue;
+
+    public IOptionsInfo info { get; set; }
 
     void Start()
     {
@@ -21,6 +23,7 @@ public class AudioSettingSlider : MonoBehaviour, IOptionsSetting
         audioMan = AudioManager.singleton;
         settingDictionaryKey = settingName;
         SliderInfo sliderInfo = audioMan.GetSetting(settingName) as SliderInfo;
+        info = sliderInfo;
         currentValue = (float)sliderInfo.Value;
         settingNameText.text = sliderInfo.Name;
         settingSlider.minValue = sliderInfo.MinValue;

@@ -71,6 +71,8 @@ public static class OptionsHandler
                         else if (defaults.ContainsKey(parts[0]))
                         {
                             ((SliderInfo)info).Value = ((SliderInfo)defaults[parts[0]]).Value;
+                            ((SliderInfo)info).MinValue = ((SliderInfo)defaults[parts[0]]).MinValue;
+                            ((SliderInfo)info).MaxValue = ((SliderInfo)defaults[parts[0]]).MaxValue;
                         }
                     }
                     else if (info is KeybindInfo)

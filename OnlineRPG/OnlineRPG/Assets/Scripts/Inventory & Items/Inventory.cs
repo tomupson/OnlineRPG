@@ -19,6 +19,7 @@ public class Inventory : MonoBehaviour, IPunObservable
     [SerializeField] private int maxSlots;
 
     ItemDatabase database;
+    GameMaster gameMaster;
 
     public List<Item> items = new List<Item>();
     public List<GameObject> slots = new List<GameObject>();
@@ -46,6 +47,8 @@ public class Inventory : MonoBehaviour, IPunObservable
     void Start()
     {
         database = GetComponent<ItemDatabase>();
+        gameMaster = FindObjectOfType<GameMaster>();
+
         for (int i = 0; i < maxSlots; i++)
         {
             GameObject newSlot = Instantiate(inventorySlotPrefab, content.transform);
@@ -187,6 +190,7 @@ public class Inventory : MonoBehaviour, IPunObservable
     {
         open = true;
         inventory.SetActive(true);
+        gameMaster.QueueEscape(CloseInventory);
         HideInfo();
     }
 

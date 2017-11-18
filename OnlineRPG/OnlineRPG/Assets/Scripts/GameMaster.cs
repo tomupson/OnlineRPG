@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
+using System;
+using System.Linq;
 
 public class GameMaster : MonoBehaviour
 {
     [SerializeField] private Texture2D defaultCursor;
 
     private InputManager inputMan;
+
+    public delegate void EscapeMenuCallbackDelegate();
+    private Stack<EscapeMenuCallbackDelegate> escapeQueue = new Stack<EscapeMenuCallbackDelegate>();
 
     void Start()
     {
@@ -15,6 +21,11 @@ public class GameMaster : MonoBehaviour
     void Update()
     {
         BindMenuInputs();
+    }
+
+    public void QueueEscape(EscapeMenuCallbackDelegate callback)
+    {
+        escapeQueue.Push(callback);
     }
 
     void BindMenuInputs()
@@ -46,11 +57,22 @@ public class GameMaster : MonoBehaviour
             Chat.singleton.ToggleChat();
         }
 
-        if (!QuestBook.singleton.open &&
-            !Inventory.singleton.open && !SkillManager.singleton.open &&
-            Input.GetKeyDown(inputMan.GetKey("OPEN_PAUSE_MENU").Key))
+        if (Input.GetKeyDown(KeyCode.Escape) &&
+            escapeQueue.Count > 0)
         {
-            PauseMenu.singleton.TogglePauseMenu();
+            escapeQueue.Pop().Invoke();
         }
+    }
+
+    public bool IsTopOfQueue(EscapeMenuCallbackDelegate callback)
+    {
+        return escapeQueue.First() == callback;
+    }
+
+    public void TryPopFromEscapeQueue(EscapeMenuCallbackDelegate callback)
+    {
+        if (!IsTopOfQueue(callback)) return;
+
+        escapeQueue.Pop();
     }
 }

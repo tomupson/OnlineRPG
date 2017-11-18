@@ -56,14 +56,14 @@ public class GeneralOptionsManager : MonoBehaviour
     {
         defaultGameSettings = new Dictionary<string, IOptionsInfo>();
 
-        defaultGameSettings["SHOW_FPS"] = new ToggleInfo("", false);
+        defaultGameSettings["SHOW_FPS"] = new ToggleInfo(string.Empty, string.Empty, false);
     }
 
     void LoadGameSettings()
     {
         gameSettings = new Dictionary<string, IOptionsInfo>();
 
-        gameSettings["SHOW_FPS"] = new ToggleInfo("Show FPS", null);
+        gameSettings["SHOW_FPS"] = new ToggleInfo("Show FPS", "Shows a small debug view of the current framerate.", null);
 
         CheckFileDirectories();
 

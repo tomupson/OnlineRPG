@@ -11,6 +11,8 @@ public class GraphicsSettingSlider : MonoBehaviour, IOptionsSetting
     private string settingDictionaryKey;
     private float currentValue;
 
+    public IOptionsInfo info { get; set; }
+
     void Start()
     {
         EventHandler.OnGraphicsSettingsChanged += CheckForChange;
@@ -21,6 +23,7 @@ public class GraphicsSettingSlider : MonoBehaviour, IOptionsSetting
         graphicsMan = GraphicsManager.singleton;
         settingDictionaryKey = settingName;
         SliderInfo sliderInfo = graphicsMan.GetSetting(settingName) as SliderInfo;
+        info = sliderInfo;
         currentValue = (float)sliderInfo.Value;
         settingNameText.text = sliderInfo.Name;
         settingSlider.minValue = sliderInfo.MinValue;

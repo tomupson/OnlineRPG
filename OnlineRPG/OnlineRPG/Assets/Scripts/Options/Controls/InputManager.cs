@@ -47,12 +47,12 @@ public class InputManager : MonoBehaviour
         // Set Default Keys in case keybinds file is changed to illegal keys or corrupted by the user.
         defaultKeybinds = new Dictionary<string, IOptionsInfo>();
 
-        defaultKeybinds["OPEN_INVENTORY"] = new KeybindInfo("", KeyCode.I);
-        defaultKeybinds["OPEN_SKILLS"] = new KeybindInfo("", KeyCode.L);
-        defaultKeybinds["OPEN_QUESTS"] = new KeybindInfo("", KeyCode.Q);
-        defaultKeybinds["OPEN_CHAT"] = new KeybindInfo("", KeyCode.T);
-        defaultKeybinds["OPEN_PAUSE_MENU"] = new KeybindInfo("", KeyCode.Escape);
-        defaultKeybinds["TAKE_SCREENSHOT"] = new KeybindInfo("", KeyCode.F12);
+        defaultKeybinds["OPEN_INVENTORY"] = new KeybindInfo(string.Empty, string.Empty, KeyCode.I);
+        defaultKeybinds["OPEN_SKILLS"] = new KeybindInfo(string.Empty, string.Empty, KeyCode.L);
+        defaultKeybinds["OPEN_QUESTS"] = new KeybindInfo(string.Empty, string.Empty, KeyCode.Q);
+        defaultKeybinds["OPEN_CHAT"] = new KeybindInfo(string.Empty, string.Empty, KeyCode.T);
+        defaultKeybinds["OPEN_PAUSE_MENU"] = new KeybindInfo(string.Empty, string.Empty, KeyCode.Escape);
+        defaultKeybinds["TAKE_SCREENSHOT"] = new KeybindInfo(string.Empty, string.Empty, KeyCode.F12);
     }
 
     // Loads the KeyCodes in from the file.
@@ -61,12 +61,12 @@ public class InputManager : MonoBehaviour
         // By default everything is KeyCode.None.
         keys = new Dictionary<string, IOptionsInfo>();
 
-        keys["OPEN_INVENTORY"] = new KeybindInfo("Inventory", KeyCode.None);
-        keys["OPEN_SKILLS"] = new KeybindInfo("Skills", KeyCode.None);
-        keys["OPEN_QUESTS"] = new KeybindInfo("Quest Book", KeyCode.None);
-        keys["OPEN_CHAT"] = new KeybindInfo("Chat", KeyCode.None);
-        keys["OPEN_PAUSE_MENU"] = new KeybindInfo("Pause Menu", KeyCode.None);
-        keys["TAKE_SCREENSHOT"] = new KeybindInfo("Screenshot", KeyCode.None);
+        keys["OPEN_INVENTORY"] = new KeybindInfo("Inventory", "The Inventory holds your items.", KeyCode.None);
+        keys["OPEN_SKILLS"] = new KeybindInfo("Skills", "Skills allow you to obtain items faster by engaging in common activities.", KeyCode.None);
+        keys["OPEN_QUESTS"] = new KeybindInfo("Quest Book", "Quests allow you to gain items and experience by completing goals.", KeyCode.None);
+        keys["OPEN_CHAT"] = new KeybindInfo("Chat", "Chat allows you to talk to other players in many channels.", KeyCode.None);
+        keys["OPEN_PAUSE_MENU"] = new KeybindInfo("Pause Menu", "Displays options.", KeyCode.None);
+        keys["TAKE_SCREENSHOT"] = new KeybindInfo("Screenshot", "Takes a screenshot of the game.", KeyCode.None);
 
         CheckFileDirectories();
 
@@ -105,7 +105,7 @@ public class InputManager : MonoBehaviour
             return (KeybindInfo)keys[keyName];
         }
 
-        return new KeybindInfo("", KeyCode.None);
+        return new KeybindInfo(string.Empty, string.Empty, KeyCode.None);
     }
 
     public List<string> GetAllKeyTypes()

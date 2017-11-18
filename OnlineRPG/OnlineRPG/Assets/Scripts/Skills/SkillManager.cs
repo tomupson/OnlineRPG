@@ -12,6 +12,7 @@ public class SkillManager : MonoBehaviour
     #endregion
 
     CharacterStats stats;
+    GameMaster gameMaster;
 
     [SerializeField] private GameObject skillMenu;
     [SerializeField] private GameObject skillPrefab;
@@ -51,8 +52,9 @@ public class SkillManager : MonoBehaviour
     void Start()
     {
         stats = Player.LocalPlayer.GetComponent<CharacterStats>();
-        animating = false;
+        gameMaster = FindObjectOfType<GameMaster>();
 
+        animating = false;
         CloseSkillMenu();
         infoSet = false;
     }
@@ -155,6 +157,7 @@ public class SkillManager : MonoBehaviour
     {
         skillMenu.SetActive(true);
         open = true;
+        gameMaster.QueueEscape(CloseSkillMenu);
         HideInfo();
     }
 

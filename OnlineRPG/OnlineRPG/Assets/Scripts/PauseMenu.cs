@@ -11,6 +11,8 @@ public class PauseMenu : MonoBehaviour
 
     [HideInInspector] public bool open;
 
+    private GameMaster gameMaster;
+
     void Awake()
     {
         if (singleton != null)
@@ -22,10 +24,17 @@ public class PauseMenu : MonoBehaviour
         singleton = this;
     }
 
+    void Start()
+    {
+        gameMaster = FindObjectOfType<GameMaster>();
+        gameMaster.QueueEscape(OpenPauseMenu);
+    }
+
     public void OpenPauseMenu()
     {
         open = true;
         pauseMenu.SetActive(true);
+        gameMaster.QueueEscape(ClosePauseMenu);
     }
 
     public void TogglePauseMenu()
@@ -39,6 +48,7 @@ public class PauseMenu : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         open = false;
+        gameMaster.QueueEscape(OpenPauseMenu);
     }
 
     public void ResumeGame()
@@ -49,11 +59,13 @@ public class PauseMenu : MonoBehaviour
     public void Options()
     {
         optionsMenu.SetActive(true);
+        gameMaster.QueueEscape(CloseOptions);
     }
 
     public void CloseOptions()
     {
-        // Chck for unapplied changes.
+        if (gameMaster.IsTopOfQueue(CloseOptions)) gameMaster.TryPopFromEscapeQueue(CloseOptions);
+        // Check for unapplied changes.
         optionsMenu.SetActive(false);
     }
 
