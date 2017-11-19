@@ -12,6 +12,8 @@ public class GraphicsSettingDropdown : MonoBehaviour, IOptionsSetting
 
     public IOptionsInfo info { get; set; }
 
+    bool setup = false;
+
     void Start()
     {
         EventHandler.OnGraphicsSettingsChanged += CheckForChange;
@@ -27,10 +29,12 @@ public class GraphicsSettingDropdown : MonoBehaviour, IOptionsSetting
         settingNameText.text = dropdownInfo.Name;
         settingDropdown.AddOptions(graphicsMan.GetDropdownOptionsFor(settingDictionaryKey));
         settingDropdown.value = (int)dropdownInfo.Index;
+        setup = true;
     }
 
     public void OnDropdownValueChanged(int newIndex)
     {
+        if (!setup) return;
         graphicsMan.SetSetting(settingDictionaryKey, newIndex);
         currentValue = newIndex;
     }

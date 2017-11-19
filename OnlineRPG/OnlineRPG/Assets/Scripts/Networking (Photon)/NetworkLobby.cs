@@ -111,7 +111,7 @@ public class NetworkLobby : MonoBehaviour
     void OnJoinedRoom()
     {
         Debug.Log("Joined room");
-        PhotonNetwork.LoadLevel("Level");
+        FindObjectOfType<SceneFader>().Network_FadeTo("Level");
     }
 
     void OnPhotonCreateRoomFailed(object[] codeAndMessage)

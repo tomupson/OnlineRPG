@@ -9,7 +9,7 @@ public class SettingTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     void Start()
     {
         tooltip = FindObjectOfType<Tooltip>();
-        info = GetComponentInParent<IOptionsSetting>().info;
+        info = transform.parent.GetComponentInParent<IOptionsSetting>().info;
     }
 
     public void OnPointerEnter(PointerEventData eventData)

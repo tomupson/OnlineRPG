@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public static class OptionsHelper
 {
@@ -29,5 +30,34 @@ public static class OptionsHelper
         if (index > resolutions.Length - 1) return resolutions[GetIndexOfCurrentResolution()];
 
         return resolutions[index];
+    }
+
+    public static bool CheckIfSettingIsOriginal(Dictionary<string, IOptionsInfo> settings, string setting, object value)
+    {
+        if (settings.ContainsKey(setting))
+        {
+            IOptionsInfo info = settings[setting];
+            if (info is ToggleInfo)
+            {
+                if (((ToggleInfo)info).IsChecked == (bool)value) return true;
+                return false;
+            }
+            else if (info is DropdownInfo)
+            {
+                if (((DropdownInfo)info).Index == (int)value) return true;
+                return false;
+            }
+            else if (info is SliderInfo)
+            {
+                if(((SliderInfo)info).Value == (float)value) return true;
+                return false;
+            }
+            else if (info is KeybindInfo)
+            {
+                if (((KeybindInfo)info).Key == (KeyCode)value) return true;
+                return false;
+            }
+        }
+        return false;
     }
 }

@@ -13,6 +13,8 @@ public class GraphicsSettingSlider : MonoBehaviour, IOptionsSetting
 
     public IOptionsInfo info { get; set; }
 
+    bool setup = false;
+
     void Start()
     {
         EventHandler.OnGraphicsSettingsChanged += CheckForChange;
@@ -29,10 +31,12 @@ public class GraphicsSettingSlider : MonoBehaviour, IOptionsSetting
         settingSlider.minValue = sliderInfo.MinValue;
         settingSlider.maxValue = sliderInfo.MaxValue;
         settingSlider.value = (float)sliderInfo.Value;
+        setup = true;
     }
 
     public void OnSliderValueChanged(float newValue)
     {
+        if (!setup) return;
         graphicsMan.SetSetting(settingDictionaryKey, newValue);
         currentValue = newValue;
     }

@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class GeneralOptionsManager : MonoBehaviour
+public class GeneralOptionsManager : MonoBehaviour, IOptionHandler
 {
     #region Singleton
     public static GeneralOptionsManager singleton;
@@ -11,6 +11,8 @@ public class GeneralOptionsManager : MonoBehaviour
 
     Dictionary<string, IOptionsInfo> gameSettings;
     Dictionary<string, IOptionsInfo> defaultGameSettings;
+
+    Dictionary<string, object> valuesToBeChanged = new Dictionary<string, object>();
 
     void Awake()
     {
@@ -39,7 +41,20 @@ public class GeneralOptionsManager : MonoBehaviour
 
     public void SetSetting(string setting, object value)
     {
-        OptionsHandler.SetSetting(gameSettings, setting, value);
+        bool isOriginal = OptionsHelper.CheckIfSettingIsOriginal(gameSettings, setting, value);
+
+        if (isOriginal) return;
+        else
+        {
+            if (valuesToBeChanged.ContainsKey(setting))
+            {
+                valuesToBeChanged[setting] = value;
+            }
+            else
+            {
+                valuesToBeChanged.Add(setting, value);
+            }
+        }
     }
 
     void CheckFileDirectories()
@@ -79,6 +94,13 @@ public class GeneralOptionsManager : MonoBehaviour
 
     public void ApplySettings()
     {
+        foreach (KeyValuePair<string, object> changeToBeMade in valuesToBeChanged)
+        {
+            OptionsHandler.SetSetting(gameSettings, changeToBeMade.Key, changeToBeMade.Value);
+        }
+
+        valuesToBeChanged.Clear();
+
         FPSDisplay fps = FindObjectOfType<FPSDisplay>();
         if ((bool)((ToggleInfo)gameSettings["SHOW_FPS"]).IsChecked) fps.Show();
         else fps.Hide();
@@ -86,7 +108,31 @@ public class GeneralOptionsManager : MonoBehaviour
         WriteToFile();
     }
 
+    public bool ChangesAreAwaiting()
+    {
+        return valuesToBeChanged.Count > 0;
+    }
+
+    public void CancelChanges()
+    {
+        valuesToBeChanged.Clear();
+
+        if (EventHandler.OnGameSettingsChanged != null)
+        {
+            EventHandler.OnGameSettingsChanged.Invoke();
+        }
+    }
+
     public void ResetSettings()
+    {
+        PopupHandler.singleton.CreatePopup(new PopupInfo("Are you sure you want to reset your game settings?", new List<PopupButtonInfo>()
+        {
+            new PopupButtonInfo("Yes", ConfirmResetSettings),
+            new PopupButtonInfo("No", delegate { Debug.Log("Cancelled"); })
+        }));
+    }
+
+    public void ConfirmResetSettings()
     {
         OptionsHandler.ResetSettings(gameSettings, defaultGameSettings);
 

@@ -13,6 +13,9 @@ public class GameSettingToggle : MonoBehaviour, IOptionsSetting
 
     public IOptionsInfo info { get; set; }
 
+    bool setup = false;
+    bool checkingForChange = false;
+
     void Start()
     {
         EventHandler.OnGameSettingsChanged += CheckForChange;
@@ -27,16 +30,19 @@ public class GameSettingToggle : MonoBehaviour, IOptionsSetting
         currentValue = (bool)toggleInfo.IsChecked;
         settingNameText.text = toggleInfo.Name;
         settingToggle.isOn = currentValue;
+        setup = true;
     }
 
     public void OnCheckboxValueChanged(bool newState)
     {
+        if (!setup || checkingForChange) return;
         generalMan.SetSetting(settingDictionaryKey, newState);
         currentValue = newState;
     }
 
     void CheckForChange()
     {
+        checkingForChange = true;
         ToggleInfo toggleInfo = generalMan.GetSetting(settingDictionaryKey) as ToggleInfo;
 
         if ((bool)toggleInfo.IsChecked != currentValue)
@@ -44,5 +50,6 @@ public class GameSettingToggle : MonoBehaviour, IOptionsSetting
             currentValue = (bool)toggleInfo.IsChecked;
             settingToggle.isOn = currentValue;
         }
+        checkingForChange = false;
     }
 }

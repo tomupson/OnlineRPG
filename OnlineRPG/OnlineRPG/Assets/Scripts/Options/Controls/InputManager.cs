@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class InputManager : MonoBehaviour
+public class InputManager : MonoBehaviour, IOptionHandler
 {
     #region Singleton
     public static InputManager singleton;
@@ -12,6 +12,8 @@ public class InputManager : MonoBehaviour
 
     Dictionary<string, IOptionsInfo> keys;
     private Dictionary<string, IOptionsInfo> defaultKeybinds;
+
+    Dictionary<string, object> valuesToBeChanged = new Dictionary<string, object>();
 
     List<KeyCode> bannedKeybindKeys;
 
@@ -83,6 +85,15 @@ public class InputManager : MonoBehaviour
 
     public void ResetKeybinds()
     {
+        PopupHandler.singleton.CreatePopup(new PopupInfo("Are you sure you want to reset your keybinds?", new List<PopupButtonInfo>()
+        {
+            new PopupButtonInfo("Yes", ConfirmResetKeybinds),
+            new PopupButtonInfo("No", delegate { Debug.Log("Cancelled"); })
+        }));
+    }
+
+    public void ConfirmResetKeybinds()
+    {
         OptionsHandler.ResetSettings(keys, defaultKeybinds);
 
         WriteToFile();
@@ -128,7 +139,45 @@ public class InputManager : MonoBehaviour
 
     public void SetKey(string keyName, object value)
     {
-        OptionsHandler.SetSetting(keys, keyName, value);
+        bool isOriginal = OptionsHelper.CheckIfSettingIsOriginal(keys, keyName, value);
+
+        if (isOriginal) return;
+        else
+        {
+            if (valuesToBeChanged.ContainsKey(keyName))
+            {
+                valuesToBeChanged[keyName] = value;
+            }
+            else
+            {
+                valuesToBeChanged.Add(keyName, value);
+            }
+        }
+    }
+
+    public void ApplySettings()
+    {
+        foreach (KeyValuePair<string, object> changeToBeMade in valuesToBeChanged)
+        {
+            OptionsHandler.SetSetting(keys, changeToBeMade.Key, changeToBeMade.Value);
+        }
+
+        valuesToBeChanged.Clear();
+    }
+
+    public bool ChangesAreAwaiting()
+    {
+        return valuesToBeChanged.Count > 0;
+    }
+
+    public void CancelChanges()
+    {
+        valuesToBeChanged.Clear();
+
+        if (EventHandler.OnKeybindsChanged != null)
+        {
+            EventHandler.OnKeybindsChanged.Invoke();
+        }
     }
 
     public void WriteToFile()

@@ -13,6 +13,8 @@ public class AudioSettingSlider : MonoBehaviour, IOptionsSetting
 
     public IOptionsInfo info { get; set; }
 
+    bool setup = false;
+
     void Start()
     {
         EventHandler.OnAudioSettingsChanged += CheckForChange;
@@ -29,10 +31,12 @@ public class AudioSettingSlider : MonoBehaviour, IOptionsSetting
         settingSlider.minValue = sliderInfo.MinValue;
         settingSlider.maxValue = sliderInfo.MaxValue;
         settingSlider.value = (int)sliderInfo.Value;
+        setup = true;
     }
 
     public void OnSliderValueChanged(float newValue)
     {
+        if (!setup) return;
         audioMan.SetSetting(settingDictionaryKey, newValue);
         currentValue = newValue;
     }

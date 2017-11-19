@@ -13,6 +13,8 @@ public class GraphicsSettingToggle : MonoBehaviour, IOptionsSetting
 
     public IOptionsInfo info { get; set; }
 
+    bool setup = false;
+
     void Start()
     {
         EventHandler.OnGraphicsSettingsChanged += CheckForChange;
@@ -27,10 +29,12 @@ public class GraphicsSettingToggle : MonoBehaviour, IOptionsSetting
         currentValue = (bool)toggleInfo.IsChecked;
         settingNameText.text = toggleInfo.Name;
         settingToggle.isOn = currentValue;
+        setup = true;
     }
 
     public void OnCheckboxValueChanged(bool newState)
     {
+        if (!setup) return;
         graphicsMan.SetSetting(settingDictionaryKey, newState);
         currentValue = newState;
     }

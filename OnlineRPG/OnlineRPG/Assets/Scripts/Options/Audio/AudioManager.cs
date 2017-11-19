@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : MonoBehaviour, IOptionHandler
 {
     #region Singleton
     public static AudioManager singleton;
@@ -11,6 +11,8 @@ public class AudioManager : MonoBehaviour
 
     Dictionary<string, IOptionsInfo> audioSettings;
     Dictionary<string, IOptionsInfo> defaultAudioSettings;
+
+    Dictionary<string, object> valuesToBeChanged = new Dictionary<string, object>();
 
     void Awake()
     {
@@ -39,7 +41,20 @@ public class AudioManager : MonoBehaviour
 
     public void SetSetting(string setting, object value)
     {
-        OptionsHandler.SetSetting(audioSettings, setting, value);
+        bool isOriginal = OptionsHelper.CheckIfSettingIsOriginal(audioSettings, setting, value);
+
+        if (isOriginal) return;
+        else
+        {
+            if (valuesToBeChanged.ContainsKey(setting))
+            {
+                valuesToBeChanged[setting] = value;
+            }
+            else
+            {
+                valuesToBeChanged.Add(setting, value);
+            }
+        }
     }
 
     public List<string> GetAllAudioSettings()
@@ -79,12 +94,43 @@ public class AudioManager : MonoBehaviour
 
     public void ApplySettings()
     {
+        foreach (KeyValuePair<string, object> changeToBeMade in valuesToBeChanged)
+        {
+            OptionsHandler.SetSetting(audioSettings, changeToBeMade.Key, changeToBeMade.Value);
+        }
+
+        valuesToBeChanged.Clear();
+
         // Set volume here.
 
         WriteToFile();
     }
 
+    public bool ChangesAreAwaiting()
+    {
+        return valuesToBeChanged.Count > 0;
+    }
+
+    public void CancelChanges()
+    {
+        valuesToBeChanged.Clear();
+
+        if (EventHandler.OnAudioSettingsChanged != null)
+        {
+            EventHandler.OnAudioSettingsChanged.Invoke();
+        }
+    }
+
     public void ResetAudioSettings()
+    {
+        PopupHandler.singleton.CreatePopup(new PopupInfo("Are you sure you want to reset your audio settings?", new List<PopupButtonInfo>()
+        {
+            new PopupButtonInfo("Yes", ConfirmResetAudioSettings),
+            new PopupButtonInfo("No", delegate { Debug.Log("Cancelled"); })
+        }));
+    }
+
+    public void ConfirmResetAudioSettings()
     {
         OptionsHandler.ResetSettings(audioSettings, defaultAudioSettings);
 

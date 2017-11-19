@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class GraphicsManager : MonoBehaviour
+public class GraphicsManager : MonoBehaviour, IOptionHandler
 {
     #region Singleton
     public static GraphicsManager singleton;
@@ -12,6 +12,8 @@ public class GraphicsManager : MonoBehaviour
     Dictionary<string, IOptionsInfo> graphicsSettings;
     Dictionary<string, IOptionsInfo> defaultGraphicsSettings;
     Dictionary<string, List<string>> settingDropdownOptions;
+
+    Dictionary<string, object> valuesToBeChanged = new Dictionary<string, object>();
 
     void Awake()
     {
@@ -79,7 +81,20 @@ public class GraphicsManager : MonoBehaviour
 
     public void SetSetting(string setting, object value)
     {
-        OptionsHandler.SetSetting(graphicsSettings, setting, value);
+        bool isOriginal = OptionsHelper.CheckIfSettingIsOriginal(graphicsSettings, setting, value);
+
+        if (isOriginal) return;
+        else
+        {
+            if (valuesToBeChanged.ContainsKey(setting))
+            {
+                valuesToBeChanged[setting] = value;
+            }
+            else
+            {
+                valuesToBeChanged.Add(setting, value);
+            }
+        }
     }
 
     public List<string> GetAllGraphicsSettings()
@@ -141,6 +156,13 @@ public class GraphicsManager : MonoBehaviour
 
     public void ApplySettings()
     {
+        foreach (KeyValuePair<string, object> changeToBeMade in valuesToBeChanged)
+        {
+            OptionsHandler.SetSetting(graphicsSettings, changeToBeMade.Key, changeToBeMade.Value);
+        }
+
+        valuesToBeChanged.Clear();
+
         QualitySettings.vSyncCount = (bool)((ToggleInfo)graphicsSettings["VSYNC"]).IsChecked ? 1 : 0;
         Resolution newRes = OptionsHelper.GetResolutionFromIndex((int)((DropdownInfo)graphicsSettings["RESOLUTION"]).Index);
         Screen.SetResolution(newRes.width, newRes.height, (bool)((ToggleInfo)graphicsSettings["FULLSCREEN"]).IsChecked, newRes.refreshRate);
@@ -160,7 +182,31 @@ public class GraphicsManager : MonoBehaviour
         WriteToFile();
     }
 
+    public bool ChangesAreAwaiting()
+    {
+        return valuesToBeChanged.Count > 0;
+    }
+
+    public void CancelChanges()
+    {
+        valuesToBeChanged.Clear();
+
+        if (EventHandler.OnGraphicsSettingsChanged != null)
+        {
+            EventHandler.OnGraphicsSettingsChanged.Invoke();
+        }
+    }
+
     public void ResetGraphicsSettings()
+    {
+        PopupHandler.singleton.CreatePopup(new PopupInfo("Are you sure you want to reset your graphics settings?", new List<PopupButtonInfo>()
+        {
+            new PopupButtonInfo("Yes", ConfirmResetGraphicsSettings),
+            new PopupButtonInfo("No", delegate { Debug.Log("Cancelled"); })
+        }));
+    }
+
+    public void ConfirmResetGraphicsSettings()
     {
         OptionsHandler.ResetSettings(graphicsSettings, defaultGraphicsSettings);
 

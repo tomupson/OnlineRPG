@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Keybind : MonoBehaviour
+public class Keybind : MonoBehaviour, IOptionsSetting
 {
     [SerializeField] private TMP_Text keybindNameText;
     [SerializeField] private TMP_Text keyText;
@@ -15,6 +15,8 @@ public class Keybind : MonoBehaviour
     InputManager inputMan;
     List<KeyCode> keyCodes = ((KeyCode[])Enum.GetValues(typeof(KeyCode))).ToList();
     KeyCode currentValue;
+
+    public IOptionsInfo info { get; set; }
 
     void Start()
     {
@@ -45,6 +47,7 @@ public class Keybind : MonoBehaviour
         inputMan = InputManager.singleton;
         keybindDictionaryKey = keybindName;
         KeybindInfo keybindInfo = inputMan.GetKey(keybindName);
+        info = keybindInfo;
         currentValue = keybindInfo.Key;
         keybindNameText.text = keybindInfo.Name;
         keyText.text = keybindInfo.Key.ToString();
