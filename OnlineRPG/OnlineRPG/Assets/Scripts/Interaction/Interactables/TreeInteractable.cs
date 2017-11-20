@@ -40,7 +40,8 @@ public class TreeInteractable : Interactable, IInteractable
 
     public void OpenContextMenu()
     {
-        if (interactOptions != null) {
+        if (interactOptions != null)
+        {
             InteractionManager.singleton.SetOptions(interactOptions, true);
             InteractionManager.singleton.Show();
         }

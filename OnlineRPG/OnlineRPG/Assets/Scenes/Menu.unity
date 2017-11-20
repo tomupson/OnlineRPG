@@ -1191,6 +1191,7 @@ MonoBehaviour:
   myPanel: {fileID: 1664717934}
   isDefault: 0
   handlerObj: {fileID: 349121129}
+  isActiveType: 1
 --- !u!1 &204994247
 GameObject:
   m_ObjectHideFlags: 0
@@ -2429,6 +2430,7 @@ MonoBehaviour:
   myPanel: {fileID: 1836339473}
   isDefault: 0
   handlerObj: {fileID: 1446433195}
+  isActiveType: 1
 --- !u!1 &402782940
 GameObject:
   m_ObjectHideFlags: 0
@@ -2813,6 +2815,7 @@ MonoBehaviour:
   myPanel: {fileID: 1995425431}
   isDefault: 0
   handlerObj: {fileID: 1474823590}
+  isActiveType: 1
 --- !u!1 &437359680
 GameObject:
   m_ObjectHideFlags: 0
@@ -5492,6 +5495,7 @@ MonoBehaviour:
   myPanel: {fileID: 83012574}
   isDefault: 1
   handlerObj: {fileID: 1028127214}
+  isActiveType: 1
 --- !u!1 &836332112
 GameObject:
   m_ObjectHideFlags: 0

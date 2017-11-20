@@ -13,13 +13,7 @@ public class NetworkPlayer : MonoBehaviour
         singleton = this;
 
         string username = PlayerPrefs.GetString("Username");
-        if (string.IsNullOrEmpty(username))
-        {
-            UserSetup.singleton.CreateUser();
-        } else
-        {
-            PhotonNetwork.playerName = PlayerPrefs.GetString("Username");
-            FindObjectOfType<PhotonNetworkManager>().Connect();
-        }
+        PhotonNetwork.playerName = PlayerPrefs.GetString("Username");
+        FindObjectOfType<PhotonNetworkManager>().Connect();
     }
 }

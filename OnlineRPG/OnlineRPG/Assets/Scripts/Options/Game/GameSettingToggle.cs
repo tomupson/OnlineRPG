@@ -36,6 +36,7 @@ public class GameSettingToggle : MonoBehaviour, IOptionsSetting
     public void OnCheckboxValueChanged(bool newState)
     {
         if (!setup || checkingForChange) return;
+
         generalMan.SetSetting(settingDictionaryKey, newState);
         currentValue = newState;
     }

@@ -18,6 +18,9 @@ public class Keybind : MonoBehaviour, IOptionsSetting
 
     public IOptionsInfo info { get; set; }
 
+    bool setup = false;
+    bool checkingForChange = false;
+
     void Start()
     {
         List<KeyCode> bannedKeys = inputMan.GetBannedKeys();
@@ -51,20 +54,26 @@ public class Keybind : MonoBehaviour, IOptionsSetting
         currentValue = keybindInfo.Key;
         keybindNameText.text = keybindInfo.Name;
         keyText.text = keybindInfo.Key.ToString();
+        setup = true;
     }
 
     public void EnableKeybindEditor()
     {
+        if (!setup || checkingForChange) return;
+
         isEditing = true;
     }
 
     void CheckForChange()
     {
+        checkingForChange = true;
         KeybindInfo keybindInfo = inputMan.GetKey(keybindDictionaryKey);
+
         if (keybindInfo.Key != currentValue)
         {
             currentValue = keybindInfo.Key;
             keyText.text = currentValue.ToString();
         }
+        checkingForChange = false;
     }
 }

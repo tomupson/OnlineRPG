@@ -14,6 +14,7 @@ public class GraphicsSettingSlider : MonoBehaviour, IOptionsSetting
     public IOptionsInfo info { get; set; }
 
     bool setup = false;
+    bool checkingForChange = false;
 
     void Start()
     {
@@ -36,19 +37,21 @@ public class GraphicsSettingSlider : MonoBehaviour, IOptionsSetting
 
     public void OnSliderValueChanged(float newValue)
     {
-        if (!setup) return;
+        if (!setup || checkingForChange) return;
         graphicsMan.SetSetting(settingDictionaryKey, newValue);
         currentValue = newValue;
     }
 
     void CheckForChange()
     {
-        SliderInfo dropdownInfo = graphicsMan.GetSetting(settingDictionaryKey) as SliderInfo;
+        checkingForChange = true;
+        SliderInfo sliderInfo = graphicsMan.GetSetting(settingDictionaryKey) as SliderInfo;
 
-        if ((float)dropdownInfo.Value != currentValue)
+        if ((float)sliderInfo.Value != currentValue)
         {
-            currentValue = (float)dropdownInfo.Value;
+            currentValue = (float)sliderInfo.Value;
             settingSlider.value = currentValue;
         }
+        checkingForChange = false;
     }
 }

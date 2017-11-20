@@ -8,12 +8,13 @@ public class AudioSettingSlider : MonoBehaviour, IOptionsSetting
     [SerializeField] private Slider settingSlider;
 
     private AudioManager audioMan;
-    private string settingDictionaryKey { get; set; }
+    private string settingDictionaryKey;
     private float currentValue;
 
     public IOptionsInfo info { get; set; }
 
     bool setup = false;
+    bool checkingForChange = false;
 
     void Start()
     {
@@ -36,13 +37,14 @@ public class AudioSettingSlider : MonoBehaviour, IOptionsSetting
 
     public void OnSliderValueChanged(float newValue)
     {
-        if (!setup) return;
+        if (!setup || checkingForChange) return;
         audioMan.SetSetting(settingDictionaryKey, newValue);
         currentValue = newValue;
     }
 
     void CheckForChange()
     {
+        checkingForChange = true;
         SliderInfo sliderInfo = audioMan.GetSetting(settingDictionaryKey) as SliderInfo;
 
         if ((float)sliderInfo.Value != currentValue)
@@ -50,5 +52,6 @@ public class AudioSettingSlider : MonoBehaviour, IOptionsSetting
             currentValue = (float)sliderInfo.Value;
             settingSlider.value = currentValue;
         }
+        checkingForChange = false;
     }
 }

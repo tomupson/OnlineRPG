@@ -13,6 +13,7 @@ public class GraphicsSettingDropdown : MonoBehaviour, IOptionsSetting
     public IOptionsInfo info { get; set; }
 
     bool setup = false;
+    bool checkingForChange = false;
 
     void Start()
     {
@@ -34,13 +35,14 @@ public class GraphicsSettingDropdown : MonoBehaviour, IOptionsSetting
 
     public void OnDropdownValueChanged(int newIndex)
     {
-        if (!setup) return;
+        if (!setup || checkingForChange) return;
         graphicsMan.SetSetting(settingDictionaryKey, newIndex);
         currentValue = newIndex;
     }
 
     void CheckForChange()
     {
+        checkingForChange = true;
         DropdownInfo dropdownInfo = graphicsMan.GetSetting(settingDictionaryKey) as DropdownInfo;
         
         if ((int)dropdownInfo.Index != currentValue)
@@ -48,5 +50,6 @@ public class GraphicsSettingDropdown : MonoBehaviour, IOptionsSetting
             currentValue = (int)dropdownInfo.Index;
             settingDropdown.value = currentValue;
         }
+        checkingForChange = false;
     }
 }

@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
             GameObject objHit = hit.collider.gameObject;
             if (objHit == Player.LocalPlayer) return;
 
-            Interactable interactableObjHit = objHit.transform.root.GetComponentInChildren<Interactable>(); // InChildren also seearches the parent.
+            Interactable interactableObjHit = objHit.GetComponentInChildren<Interactable>(); // InChildren also seearches the parent.
             
             if (interactableObjHit != null)
             {

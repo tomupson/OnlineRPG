@@ -14,6 +14,7 @@ public class GraphicsSettingToggle : MonoBehaviour, IOptionsSetting
     public IOptionsInfo info { get; set; }
 
     bool setup = false;
+    bool checkingForChange = false;
 
     void Start()
     {
@@ -34,13 +35,14 @@ public class GraphicsSettingToggle : MonoBehaviour, IOptionsSetting
 
     public void OnCheckboxValueChanged(bool newState)
     {
-        if (!setup) return;
+        if (!setup || checkingForChange) return;
         graphicsMan.SetSetting(settingDictionaryKey, newState);
         currentValue = newState;
     }
 
     void CheckForChange()
     {
+        checkingForChange = true;
         ToggleInfo toggleInfo = graphicsMan.GetSetting(settingDictionaryKey) as ToggleInfo;
 
         if ((bool)toggleInfo.IsChecked != currentValue)
@@ -48,5 +50,6 @@ public class GraphicsSettingToggle : MonoBehaviour, IOptionsSetting
             currentValue = (bool)toggleInfo.IsChecked;
             settingToggle.isOn = currentValue;
         }
+        checkingForChange = false;
     }
 }
