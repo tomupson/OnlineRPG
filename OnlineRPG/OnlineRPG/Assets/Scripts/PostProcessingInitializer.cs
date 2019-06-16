@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.PostProcessing;
 
 [RequireComponent(typeof(PostProcessingBehaviour), typeof(Camera))]
 public class PostProcessingInitializer : MonoBehaviour
